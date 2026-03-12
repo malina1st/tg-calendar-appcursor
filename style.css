@@ -259,3 +259,7 @@
     font-size: 0.8rem;
     color: #6b7280;
   }
+
+.hidden {
+  display: none !important;
+}

@@ -268,19 +268,23 @@ function renderSidePanel() {
   const eventsForDateList = document.getElementById("events-for-date");
   const upcomingList = document.getElementById("upcoming-events");
   const panelTitle = document.getElementById("event-panel-title");
-
-  panelTitle.textContent = "События";
-  eventsForDateList.innerHTML = "";
+  const eventForm = document.getElementById("event-form");
+  const dateEventsContainer = document.getElementById("date-events-container");
 
   if (!state.selectedDate) {
-    // Когда дата не выбрана, просим пользователя выбрать день
-    selectedDateLabel.textContent = "Дата не выбрана. Нажмите на день в календаре.";
-
-    const li = document.createElement("li");
-    li.className = "event-empty";
-    li.textContent = "Выберите дату в календаре, чтобы добавить или просмотреть события.";
-    eventsForDateList.appendChild(li);
+    // Дата не выбрана: скрываем форму и блок "События выбранной даты"
+    selectedDateLabel.textContent = "";
+    eventsForDateList.innerHTML = "";
+    if (eventForm) eventForm.classList.add("hidden");
+    if (dateEventsContainer) dateEventsContainer.classList.add("hidden");
   } else {
+    // Показать форму и блок "События выбранной даты"
+    if (eventForm) eventForm.classList.remove("hidden");
+    if (dateEventsContainer) dateEventsContainer.classList.remove("hidden");
+
+    panelTitle.textContent = "События";
+    eventsForDateList.innerHTML = "";
+
     const dateObj = new Date(state.selectedDate);
     selectedDateLabel.textContent = `Выбрана дата: ${formatDateHuman(dateObj)}`;
 
@@ -323,7 +327,7 @@ function renderSidePanel() {
     }
   }
 
-  const upcoming = getUpcomingEvents(state.events, 20);
+  const upcoming = getUpcomingEvents(state.events, 3);
   upcomingList.innerHTML = "";
   if (upcoming.length === 0) {
     const li = document.createElement("li");
