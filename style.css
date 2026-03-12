@@ -1,0 +1,261 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  }
+  
+  body {
+    background: #0f172a;
+    color: #e5e7eb;
+  }
+  
+  .app {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 12px;
+  }
+  
+  .app-header {
+    text-align: center;
+    margin-bottom: 12px;
+  }
+  
+  .app-header h1 {
+    font-size: 1.4rem;
+    margin-bottom: 4px;
+  }
+  
+  .app-header p {
+    color: #9ca3af;
+    font-size: 0.9rem;
+  }
+  
+  .app-main {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  
+  @media (min-width: 900px) {
+    .app-main {
+      flex-direction: row;
+      align-items: flex-start;
+    }
+  }
+  
+  .calendar-year {
+    flex: 1;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+  }
+  
+  @media (min-width: 900px) {
+    .calendar-year {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+  
+  .month-card {
+    background: #020617;
+    border-radius: 10px;
+    padding: 8px;
+    border: 1px solid #111827;
+    cursor: pointer;
+    transition: transform 0.1s ease, box-shadow 0.1s ease, border-color 0.1s ease;
+  }
+  
+  .month-card:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 10px rgba(15, 23, 42, 0.7);
+    border-color: #1d4ed8;
+  }
+  
+  .month-title {
+    font-size: 0.9rem;
+    margin-bottom: 4px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .month-title span {
+    font-weight: 600;
+  }
+  
+  .month-has-events {
+    color: #facc15;
+    font-size: 0.75rem;
+  }
+  
+  .weekdays,
+  .days-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    font-size: 0.7rem;
+    gap: 2px;
+  }
+  
+  .weekdays {
+    margin-bottom: 2px;
+    color: #6b7280;
+  }
+  
+  .weekday {
+    text-align: center;
+  }
+  
+  .day-cell {
+    text-align: center;
+    padding: 2px 0;
+    border-radius: 4px;
+    min-height: 20px;
+    position: relative;
+    font-size: 0.7rem;
+  }
+  
+  .day-cell.empty {
+    opacity: 0;
+  }
+  
+  .day-cell .dot {
+    position: absolute;
+    bottom: 1px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 4px;
+    height: 4px;
+    border-radius: 999px;
+    background: #f97316;
+  }
+  
+  .day-today {
+    border: 1px solid #22c55e;
+  }
+  
+  .day-selected {
+    background: #1d4ed8;
+    color: #e5e7eb;
+  }
+  
+  .event-panel {
+    flex: 1;
+    background: #020617;
+    border-radius: 10px;
+    padding: 10px;
+    border: 1px solid #111827;
+  }
+  
+  .event-panel h2 {
+    font-size: 1rem;
+    margin-bottom: 4px;
+  }
+  
+  #selected-date {
+    font-size: 0.8rem;
+    color: #9ca3af;
+    margin-bottom: 8px;
+  }
+  
+  #event-form {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 8px;
+  }
+  
+  #event-form label {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    font-size: 0.8rem;
+  }
+  
+  #event-title {
+    resize: vertical;
+    min-height: 50px;
+  }
+  
+  #event-title,
+  #event-note {
+    border-radius: 6px;
+    border: 1px solid #1f2937;
+    padding: 4px 6px;
+    background: #020617;
+    color: #e5e7eb;
+  }
+  
+  #event-title:focus,
+  #event-note:focus {
+    outline: none;
+    border-color: #2563eb;
+    box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.4);
+  }
+  
+  #event-form button {
+    border: none;
+    border-radius: 999px;
+    padding: 6px 10px;
+    background: linear-gradient(to right, #2563eb, #4f46e5);
+    color: #e5e7eb;
+    font-size: 0.9rem;
+    cursor: pointer;
+    margin-top: 2px;
+  }
+  
+  #event-form button:hover {
+    opacity: 0.9;
+  }
+  
+  .events-list-container {
+    margin-top: 10px;
+  }
+  
+  .events-list-container h3 {
+    font-size: 0.9rem;
+    margin-bottom: 4px;
+  }
+  
+  .events-list-container ul {
+    list-style: none;
+    max-height: 200px;
+    overflow-y: auto;
+    padding-right: 4px;
+  }
+  
+  .event-item {
+    padding: 4px 6px;
+    border-radius: 6px;
+    background: #020617;
+    border: 1px solid #1f2937;
+    margin-bottom: 4px;
+    font-size: 0.8rem;
+  }
+  
+  .event-item-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2px;
+  }
+  
+  .event-item-title {
+    font-weight: 500;
+  }
+  
+  .event-item-date {
+    font-size: 0.7rem;
+    color: #9ca3af;
+  }
+  
+  .event-item-note {
+    font-size: 0.75rem;
+    color: #d1d5db;
+    margin-top: 2px;
+  }
+  
+  .event-empty {
+    font-size: 0.8rem;
+    color: #6b7280;
+  }
