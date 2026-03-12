@@ -133,7 +133,7 @@ async function saveEventToServer(event) {
 // ============= СОСТОЯНИЕ =============
 const state = {
   year: new Date().getFullYear(),
-  selectedDate: formatDate(new Date()),
+  selectedDate: null, // по умолчанию дата не выбрана
   events: loadEvents(), // [{ id, dates:[YYYY-MM-DD], title, note }]
 };
 
@@ -232,7 +232,7 @@ function renderYearCalendar() {
         cell.classList.add("day-today");
       }
 
-      if (dateStr === state.selectedDate) {
+      if (state.selectedDate && dateStr === state.selectedDate) {
         cell.classList.add("day-selected");
       }
 
@@ -269,47 +269,58 @@ function renderSidePanel() {
   const upcomingList = document.getElementById("upcoming-events");
   const panelTitle = document.getElementById("event-panel-title");
 
-  const dateObj = new Date(state.selectedDate);
-  selectedDateLabel.textContent = `Выбрана дата: ${formatDateHuman(dateObj)}`;
   panelTitle.textContent = "События";
-
-  const eventsForDate = state.events.filter((e) => e.dates.includes(state.selectedDate));
   eventsForDateList.innerHTML = "";
 
-  if (eventsForDate.length === 0) {
+  if (!state.selectedDate) {
+    // Когда дата не выбрана, просим пользователя выбрать день
+    selectedDateLabel.textContent = "Дата не выбрана. Нажмите на день в календаре.";
+
     const li = document.createElement("li");
     li.className = "event-empty";
-    li.textContent = "На эту дату пока нет событий.";
+    li.textContent = "Выберите дату в календаре, чтобы добавить или просмотреть события.";
     eventsForDateList.appendChild(li);
   } else {
-    eventsForDate.forEach((e) => {
+    const dateObj = new Date(state.selectedDate);
+    selectedDateLabel.textContent = `Выбрана дата: ${formatDateHuman(dateObj)}`;
+
+    const eventsForDate = state.events.filter((e) => e.dates.includes(state.selectedDate));
+
+    if (eventsForDate.length === 0) {
       const li = document.createElement("li");
-      li.className = "event-item";
-
-      const header = document.createElement("div");
-      header.className = "event-item-header";
-
-      const title = document.createElement("div");
-      title.className = "event-item-title";
-      title.textContent = e.title;
-
-      const dateLabel = document.createElement("div");
-      dateLabel.className = "event-item-date";
-      dateLabel.textContent = "Выбранная дата";
-
-      header.appendChild(title);
-      header.appendChild(dateLabel);
-      li.appendChild(header);
-
-      if (e.note) {
-        const note = document.createElement("div");
-        note.className = "event-item-note";
-        note.textContent = e.note;
-        li.appendChild(note);
-      }
-
+      li.className = "event-empty";
+      li.textContent = "На эту дату пока нет событий.";
       eventsForDateList.appendChild(li);
-    });
+    } else {
+      eventsForDate.forEach((e) => {
+        const li = document.createElement("li");
+        li.className = "event-item";
+
+        const header = document.createElement("div");
+        header.className = "event-item-header";
+
+        const title = document.createElement("div");
+        title.className = "event-item-title";
+        title.textContent = e.title;
+
+        const dateLabel = document.createElement("div");
+        dateLabel.className = "event-item-date";
+        dateLabel.textContent = "Выбранная дата";
+
+        header.appendChild(title);
+        header.appendChild(dateLabel);
+        li.appendChild(header);
+
+        if (e.note) {
+          const note = document.createElement("div");
+          note.className = "event-item-note";
+          note.textContent = e.note;
+          li.appendChild(note);
+        }
+
+        eventsForDateList.appendChild(li);
+      });
+    }
   }
 
   const upcoming = getUpcomingEvents(state.events, 20);
@@ -365,7 +376,7 @@ function setupForm() {
     const title = titleInput.value.trim();
     const note = noteInput.value.trim();
 
-    if (!title) return;
+    if (!title || !state.selectedDate) return;
 
     const newEvent = {
       id: Date.now().toString(),
