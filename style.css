@@ -171,6 +171,18 @@
     gap: 2px;
     font-size: 0.8rem;
   }
+
+.event-datetime-row {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 6px;
+}
+
+@media (max-width: 600px) {
+  .event-datetime-row {
+    grid-template-columns: repeat(1, minmax(0, 1fr));
+  }
+}
   
   #event-title {
     resize: vertical;

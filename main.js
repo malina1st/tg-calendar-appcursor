@@ -50,18 +50,35 @@ function formatDateHuman(date) {
 }
 
 function getUpcomingEvents(events, limit = 10) {
-  const today = new Date();
-  const todayStr = formatDate(today);
-  const flat = events.flatMap((e) =>
-    e.dates.map((d) => ({
-      date: d,
-      title: e.title,
-      note: e.note || "",
-    }))
-  );
-  const filtered = flat.filter((e) => e.date >= todayStr);
-  filtered.sort((a, b) => (a.date < b.date ? -1 : a.date > b.date ? 1 : 0));
-  return filtered.slice(0, limit);
+  const todayStr = formatDate(new Date());
+
+  const normalized = events
+    .map((e) => {
+      const startDate = e.startDate || (e.dates && e.dates[0]);
+      if (!startDate) return null;
+      return { ...e, startDate };
+    })
+    .filter(Boolean)
+    .filter((e) => e.startDate >= todayStr);
+
+  normalized.sort((a, b) => (a.startDate < b.startDate ? -1 : a.startDate > b.startDate ? 1 : 0));
+  return normalized.slice(0, limit);
+}
+
+function buildDatesRange(startDateStr, endDateStr) {
+  const dates = [];
+  const start = new Date(startDateStr);
+  const end = new Date(endDateStr);
+  if (Number.isNaN(start.getTime()) || Number.isNaN(end.getTime())) {
+    return [startDateStr];
+  }
+
+  let current = start;
+  while (current <= end) {
+    dates.push(formatDate(current));
+    current = new Date(current.getFullYear(), current.getMonth(), current.getDate() + 1);
+  }
+  return dates;
 }
 
 // Загрузить все события с сервера Supabase
@@ -80,12 +97,20 @@ async function fetchEventsFromServer() {
     }
 
     const rows = await res.json();
-    return rows.map((row) => ({
-      id: row.id,
-      dates: [row.date],
-      title: row.title,
-      note: row.note || "",
-    }));
+    return rows.map((row) => {
+      const startDate = row.date;
+      const endDate = row.end_date || row.date;
+      return {
+        id: row.id,
+        startDate,
+        endDate,
+        startTime: row.start_time || "",
+        endTime: row.end_time || "",
+        dates: buildDatesRange(startDate, endDate),
+        title: row.title,
+        note: row.note || "",
+      };
+    });
   } catch (e) {
     console.error("Ошибка загрузки с сервера", e);
     return [];
@@ -96,7 +121,10 @@ async function fetchEventsFromServer() {
 async function saveEventToServer(event) {
   try {
     const body = {
-      date: event.dates[0],
+      date: event.startDate,
+      end_date: event.endDate,
+      start_time: event.startTime || null,
+      end_time: event.endTime || null,
       title: event.title,
       note: event.note || null,
     };
@@ -174,7 +202,7 @@ async function deleteEventFromServer(id) {
 const state = {
   year: new Date().getFullYear(),
   selectedDate: null, // по умолчанию дата не выбрана
-  events: loadEvents(), // [{ id, dates:[YYYY-MM-DD], title, note }]
+  events: loadEvents(), // [{ id, startDate, endDate, dates:[YYYY-MM-DD], title, note, startTime, endTime }]
 };
 
 // ============= РЕНДЕР КАЛЕНДАРЯ ГОДА =============
@@ -328,7 +356,9 @@ function renderSidePanel() {
     const dateObj = new Date(state.selectedDate);
     selectedDateLabel.textContent = `Выбрана дата: ${formatDateHuman(dateObj)}`;
 
-    const eventsForDate = state.events.filter((e) => e.dates.includes(state.selectedDate));
+    const eventsForDate = state.events.filter(
+      (e) => e.dates && e.dates.includes(state.selectedDate)
+    );
 
     if (eventsForDate.length === 0) {
       const li = document.createElement("li");
@@ -410,6 +440,34 @@ function renderSidePanel() {
         header.appendChild(actions);
         li.appendChild(header);
 
+        const dateLabel = document.createElement("div");
+        dateLabel.className = "event-item-date";
+
+        const startDate = e.startDate || (e.dates && e.dates[0]);
+        const endDate = e.endDate || startDate;
+        const sameDay = startDate === endDate;
+
+        const startDateObj = new Date(startDate);
+        const endDateObj = new Date(endDate);
+
+        const startDateText = formatDateHuman(startDateObj);
+        const endDateText = formatDateHuman(endDateObj);
+
+        let text = "";
+        if (sameDay) {
+          text = startDateText;
+        } else {
+          text = `с ${startDateText} до ${endDateText}`;
+        }
+
+        if (e.startTime || e.endTime) {
+          const timePart = `${e.startTime || ""}${e.endTime ? `–${e.endTime}` : ""}`;
+          text = sameDay ? `${startDateText}, ${timePart}` : `${text}, ${timePart}`;
+        }
+
+        dateLabel.textContent = text;
+        li.appendChild(dateLabel);
+
         if (e.note) {
           const note = document.createElement("div");
           note.className = "event-item-note";
@@ -444,8 +502,29 @@ function renderSidePanel() {
       const dateLabel = document.createElement("div");
       dateLabel.className = "event-item-date";
 
-      const dateObj = new Date(e.date);
-      dateLabel.textContent = formatDateHuman(dateObj);
+      const startDate = e.startDate || (e.dates && e.dates[0]);
+      const endDate = e.endDate || startDate;
+      const sameDay = startDate === endDate;
+
+      const startDateObj = new Date(startDate);
+      const endDateObj = new Date(endDate);
+
+      const startDateText = formatDateHuman(startDateObj);
+      const endDateText = formatDateHuman(endDateObj);
+
+      let text = "";
+      if (sameDay) {
+        text = startDateText;
+      } else {
+        text = `с ${startDateText} до ${endDateText}`;
+      }
+
+      if (e.startTime || e.endTime) {
+        const timePart = `${e.startTime || ""}${e.endTime ? `–${e.endTime}` : ""}`;
+        text = sameDay ? `${startDateText}, ${timePart}` : `${text}, ${timePart}`;
+      }
+
+      dateLabel.textContent = text;
 
       header.appendChild(title);
       header.appendChild(dateLabel);
@@ -468,18 +547,38 @@ function setupForm() {
   const form = document.getElementById("event-form");
   const titleInput = document.getElementById("event-title");
   const noteInput = document.getElementById("event-note");
+  const startTimeInput = document.getElementById("event-start-time");
+  const endDateInput = document.getElementById("event-end-date");
+  const endTimeInput = document.getElementById("event-end-time");
 
   form.addEventListener("submit", (e) => {
     e.preventDefault();
 
     const title = titleInput.value.trim();
     const note = noteInput.value.trim();
+    const startDate = state.selectedDate;
+    const startTime = (startTimeInput?.value || "").trim();
+    const endDateRaw = (endDateInput?.value || "").trim();
+    const endTime = (endTimeInput?.value || "").trim();
 
-    if (!title || !state.selectedDate) return;
+    if (!title || !startDate) return;
+
+    let endDate = endDateRaw || startDate;
+    if (endDate < startDate) {
+      // если по ошибке выбрали дату конца раньше начала — меняем местами
+      const tmp = endDate;
+      endDate = startDate;
+    }
+
+    const datesRange = buildDatesRange(startDate, endDate);
 
     const newEvent = {
       id: Date.now().toString(),
-      dates: [state.selectedDate],
+      startDate,
+      endDate,
+      startTime,
+      endTime,
+      dates: datesRange,
       title,
       note,
     };
@@ -502,6 +601,9 @@ function setupForm() {
 
     titleInput.value = "";
     noteInput.value = "";
+    if (startTimeInput) startTimeInput.value = "";
+    if (endDateInput) endDateInput.value = "";
+    if (endTimeInput) endTimeInput.value = "";
 
     renderYearCalendar();
     renderSidePanel();
