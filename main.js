@@ -114,14 +114,16 @@ function renderYearCalendar() {
       return Number(y) === state.year && Number(m) === month + 1;
     });
 
+    // Сначала добавляем название месяца слева
+    title.appendChild(titleText);
+
+    // Если есть события — добавляем кружок справа, чтобы название не сдвигалось
     if (monthHasEvents) {
       const badge = document.createElement("span");
       badge.className = "month-has-events";
       badge.textContent = "●";
       title.appendChild(badge);
     }
-
-    title.appendChild(titleText);
     card.appendChild(title);
 
     const weekdaysRow = document.createElement("div");
