@@ -130,6 +130,46 @@ async function saveEventToServer(event) {
   }
 }
 
+// Обновить событие на сервере Supabase
+async function updateEventOnServer(id, updates) {
+  try {
+    const res = await fetch(`${EVENTS_ENDPOINT}?id=eq.${id}`, {
+      method: "PATCH",
+      headers: {
+        apikey: SUPABASE_ANON_KEY,
+        Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(updates),
+    });
+
+    if (!res.ok) {
+      console.error("Ошибка обновления на сервере", await res.text());
+    }
+  } catch (e) {
+    console.error("Ошибка сети при обновлении", e);
+  }
+}
+
+// Удалить событие на сервере Supabase
+async function deleteEventFromServer(id) {
+  try {
+    const res = await fetch(`${EVENTS_ENDPOINT}?id=eq.${id}`, {
+      method: "DELETE",
+      headers: {
+        apikey: SUPABASE_ANON_KEY,
+        Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
+      },
+    });
+
+    if (!res.ok) {
+      console.error("Ошибка удаления на сервере", await res.text());
+    }
+  } catch (e) {
+    console.error("Ошибка сети при удалении", e);
+  }
+}
+
 // ============= СОСТОЯНИЕ =============
 const state = {
   year: new Date().getFullYear(),
@@ -307,12 +347,67 @@ function renderSidePanel() {
         title.className = "event-item-title";
         title.textContent = e.title;
 
-        const dateLabel = document.createElement("div");
-        dateLabel.className = "event-item-date";
-        dateLabel.textContent = "Выбранная дата";
+        const actions = document.createElement("div");
+        actions.className = "event-item-actions";
+
+        const editBtn = document.createElement("button");
+        editBtn.type = "button";
+        editBtn.className = "event-item-button";
+        editBtn.textContent = "Редакт.";
+
+        editBtn.addEventListener("click", () => {
+          const newTitle = window.prompt("Новое описание события:", e.title);
+          if (newTitle === null) return; // нажали Отмена
+          const trimmedTitle = newTitle.trim();
+          if (!trimmedTitle) return;
+
+          const newNote = window.prompt("Новая заметка (можно оставить пустой):", e.note || "");
+          if (newNote === null) return;
+
+          // локально обновляем
+          const idx = state.events.findIndex((ev) => ev.id === e.id);
+          if (idx !== -1) {
+            state.events[idx] = {
+              ...state.events[idx],
+              title: trimmedTitle,
+              note: newNote.trim(),
+            };
+            saveEvents(state.events);
+            renderYearCalendar();
+            renderSidePanel();
+          }
+
+          // отправляем на сервер
+          updateEventOnServer(e.id, {
+            title: trimmedTitle,
+            note: newNote.trim() || null,
+          });
+        });
+
+        const deleteBtn = document.createElement("button");
+        deleteBtn.type = "button";
+        deleteBtn.className = "event-item-button";
+        deleteBtn.textContent = "Удалить";
+
+        deleteBtn.addEventListener("click", () => {
+          const confirmed = window.confirm("Удалить это событие?");
+          if (!confirmed) return;
+
+          // локально удаляем
+          state.events = state.events.filter((ev) => ev.id !== e.id);
+          saveEvents(state.events);
+          renderYearCalendar();
+          renderSidePanel();
+
+          // удаляем на сервере
+          deleteEventFromServer(e.id);
+        });
+
+        actions.appendChild(editBtn);
+        actions.appendChild(deleteBtn);
 
         header.appendChild(title);
-        header.appendChild(dateLabel);
+        header.appendChild(actions);
         li.appendChild(header);
 
         if (e.note) {

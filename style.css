@@ -248,6 +248,25 @@
     font-size: 0.7rem;
     color: #9ca3af;
   }
+
+.event-item-actions {
+  display: flex;
+  gap: 4px;
+}
+
+.event-item-button {
+  border: 1px solid #1f2937;
+  background: #020617;
+  color: #9ca3af;
+  border-radius: 999px;
+  padding: 2px 6px;
+  font-size: 0.7rem;
+  cursor: pointer;
+}
+
+.event-item-button:hover {
+  background: #111827;
+}
   
   .event-item-note {
     font-size: 0.75rem;
