@@ -8,6 +8,11 @@ if (tg) {
 // ============= НАСТРОЙКИ =============
 const STORAGE_KEY = "tg_calendar_events_v1";
 
+// Настройки Supabase (общий сервер для всех)
+const SUPABASE_URL = "https://goctusklfhuygbpobqts.supabase.co";
+const SUPABASE_ANON_KEY = "sb_publishable_GZ8V9A3uRlGx7s6sfvy3Vw_dPdsILiW";
+const EVENTS_ENDPOINT = `${SUPABASE_URL}/rest/v1/events`;
+
 // ============= ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ =============
 function loadEvents() {
   try {
@@ -57,6 +62,72 @@ function getUpcomingEvents(events, limit = 10) {
   const filtered = flat.filter((e) => e.date >= todayStr);
   filtered.sort((a, b) => (a.date < b.date ? -1 : a.date > b.date ? 1 : 0));
   return filtered.slice(0, limit);
+}
+
+// Загрузить все события с сервера Supabase
+async function fetchEventsFromServer() {
+  try {
+    const res = await fetch(`${EVENTS_ENDPOINT}?select=*`, {
+      headers: {
+        apikey: SUPABASE_ANON_KEY,
+        Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
+      },
+    });
+
+    if (!res.ok) {
+      console.error("Ошибка ответа сервера", await res.text());
+      return [];
+    }
+
+    const rows = await res.json();
+    return rows.map((row) => ({
+      id: row.id,
+      dates: [row.date],
+      title: row.title,
+      note: row.note || "",
+    }));
+  } catch (e) {
+    console.error("Ошибка загрузки с сервера", e);
+    return [];
+  }
+}
+
+// Сохранить новое событие на сервере Supabase
+async function saveEventToServer(event) {
+  try {
+    const body = {
+      date: event.dates[0],
+      title: event.title,
+      note: event.note || null,
+    };
+
+    const res = await fetch(EVENTS_ENDPOINT, {
+      method: "POST",
+      headers: {
+        apikey: SUPABASE_ANON_KEY,
+        Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
+        "Content-Type": "application/json",
+        Prefer: "return=representation",
+      },
+      body: JSON.stringify(body),
+    });
+
+    if (!res.ok) {
+      console.error("Ошибка сохранения на сервере", await res.text());
+      return null;
+    }
+
+    const [row] = await res.json();
+    return {
+      id: row.id,
+      dates: [row.date],
+      title: row.title,
+      note: row.note || "",
+    };
+  } catch (e) {
+    console.error("Ошибка сети при сохранении", e);
+    return null;
+  }
 }
 
 // ============= СОСТОЯНИЕ =============
@@ -306,6 +377,19 @@ function setupForm() {
     state.events.push(newEvent);
     saveEvents(state.events);
 
+    // Отправляем событие на сервер (асинхронно)
+    saveEventToServer(newEvent).then((saved) => {
+      if (saved) {
+        const idx = state.events.findIndex((e) => e.id === newEvent.id);
+        if (idx !== -1) {
+          state.events[idx] = saved;
+          saveEvents(state.events);
+          renderYearCalendar();
+          renderSidePanel();
+        }
+      }
+    });
+
     titleInput.value = "";
     noteInput.value = "";
 
@@ -319,8 +403,20 @@ function setupForm() {
 }
 
 // ============= ИНИЦИАЛИЗАЦИЯ =============
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
   setupForm();
+
+  // Сначала показываем локальные события (если уже что-то есть в localStorage)
+  state.events = loadEvents();
   renderYearCalendar();
   renderSidePanel();
+
+  // Потом пробуем загрузить свежие события с сервера Supabase
+  const serverEvents = await fetchEventsFromServer();
+  if (serverEvents.length > 0) {
+    state.events = serverEvents;
+    saveEvents(state.events); // обновим локальный кеш
+    renderYearCalendar();
+    renderSidePanel();
+  }
 });
