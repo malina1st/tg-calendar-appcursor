@@ -326,8 +326,8 @@ function renderYearCalendar() {
         cell.classList.add("day-selected");
       }
 
-      // Особая дата: день рождения Дмитрия — 19 мая (подсвечиваем фиолетовым цветом числа)
-      if (dateObj.getMonth() === 4 && dateObj.getDate() === 19) {
+      // Особые даты: дни рождения Дмитрия (19 мая) и Риты (15 мая) — подсвечиваем фиолетовым цветом числа
+      if (dateObj.getMonth() === 4 && (dateObj.getDate() === 19 || dateObj.getDate() === 15)) {
         cell.classList.add("day-birthday");
       }
 
@@ -591,14 +591,20 @@ function openEventModal() {
     dateLabel.textContent = formatDateHuman(dateObj);
   }
 
-  // Если выбрана дата 19 мая — показываем фиксированную подпись с возрастом (от 19.05.1987)
+  // Особые дни рождения: Дмитрия (19.05.1987) и Риты (15.05.1992)
   const isDmitryBirthday =
     dateObj.getMonth() === 4 && dateObj.getDate() === 19;
+  const isRitaBirthday =
+    dateObj.getMonth() === 4 && dateObj.getDate() === 15;
+
   const dmitryAge = isDmitryBirthday ? dateObj.getFullYear() - 1987 : null;
+  const ritaAge = isRitaBirthday ? dateObj.getFullYear() - 1992 : null;
 
   if (titleLabel) {
     if (isDmitryBirthday && dmitryAge !== null) {
       titleLabel.innerHTML = `День рождения Дмитрия 🍰<br><span class="birthday-age-note">(исполняется ${dmitryAge} лет)</span>`;
+    } else if (isRitaBirthday && ritaAge !== null) {
+      titleLabel.innerHTML = `День рождения Риты 🍰<br><span class="birthday-age-note">(исполняется ${ritaAge} лет)</span>`;
     } else {
       titleLabel.textContent = "События выбранной даты";
     }
