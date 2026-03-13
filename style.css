@@ -206,14 +206,19 @@
   }
 
 .event-datetime-row {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.event-datetime-group {
+  display: flex;
   gap: 6px;
 }
 
 @media (max-width: 600px) {
-  .event-datetime-row {
-    grid-template-columns: repeat(1, minmax(0, 1fr));
+  .event-datetime-group {
+    flex-direction: column;
   }
 }
 
