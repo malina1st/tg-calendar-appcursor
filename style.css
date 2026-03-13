@@ -265,6 +265,7 @@
 }
 
 .modal-dialog {
+  position: relative;
   width: 100%;
   max-width: 480px;
   background: #020617;
@@ -275,13 +276,14 @@
 }
 
 .modal-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+  padding-right: 50px;
   margin-bottom: 8px;
 }
 
 .modal-header-buttons {
+  position: absolute;
+  top: 12px;
+  right: 12px;
   display: flex;
   align-items: center;
   gap: 6px;

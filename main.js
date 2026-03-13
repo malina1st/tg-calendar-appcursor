@@ -695,7 +695,7 @@ function openEventModal() {
           const age = dateObj.getFullYear() - b.year;
           return `День рождения ${b.name} 🍰<br><span class="birthday-age-note">(исполняется ${age} лет)</span>`;
         })
-        .join('<br><br>');
+        .join('<br>');
     } else {
       titleLabel.textContent = "События выбранной даты";
     }
