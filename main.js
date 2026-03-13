@@ -767,9 +767,10 @@ document.addEventListener("DOMContentLoaded", async () => {
   renderYearCalendar();
   renderSidePanel();
 
-  // Загружаем с сервера: при успехе подменяем и сохраняем в localStorage; при ошибке оставляем локальные
+  // Загружаем с сервера: подменяем локальные только если сервер вернул непустой список
+  // (пустой ответ [] не затирает события — иначе при пустой таблице Supabase терялись бы локальные данные)
   const serverEvents = await fetchEventsFromServer();
-  if (serverEvents !== null) {
+  if (serverEvents !== null && serverEvents.length > 0) {
     state.events = serverEvents;
     saveEvents(state.events);
     renderYearCalendar();
