@@ -13,6 +13,20 @@ const SUPABASE_URL = "https://goctusklfhuygbpobqts.supabase.co";
 const SUPABASE_ANON_KEY = "sb_publishable_GZ8V9A3uRlGx7s6sfvy3Vw_dPdsILiW";
 const EVENTS_ENDPOINT = `${SUPABASE_URL}/rest/v1/events`;
 
+// Заголовки для Supabase: ключ sb_publishable_ передаём только в apikey, JWT (eyJ) — в apikey и Authorization
+function getSupabaseHeaders(extra = {}) {
+  const key = SUPABASE_ANON_KEY;
+  const isJwt = key.startsWith("eyJ");
+  const headers = {
+    apikey: key,
+    ...extra,
+  };
+  if (isJwt) {
+    headers.Authorization = `Bearer ${key}`;
+  }
+  return headers;
+}
+
 // ============= ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ =============
 function loadEvents() {
   try {
@@ -85,10 +99,7 @@ function buildDatesRange(startDateStr, endDateStr) {
 async function fetchEventsFromServer() {
   try {
     const res = await fetch(`${EVENTS_ENDPOINT}?select=*`, {
-      headers: {
-        apikey: SUPABASE_ANON_KEY,
-        Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
-      },
+      headers: getSupabaseHeaders(),
     });
 
     if (!res.ok) {
@@ -131,12 +142,10 @@ async function saveEventToServer(event) {
 
     const res = await fetch(EVENTS_ENDPOINT, {
       method: "POST",
-      headers: {
-        apikey: SUPABASE_ANON_KEY,
-        Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
+      headers: getSupabaseHeaders({
         "Content-Type": "application/json",
         Prefer: "return=representation",
-      },
+      }),
       body: JSON.stringify(body),
     });
 
@@ -169,11 +178,9 @@ async function updateEventOnServer(id, updates) {
   try {
     const res = await fetch(`${EVENTS_ENDPOINT}?id=eq.${id}`, {
       method: "PATCH",
-      headers: {
-        apikey: SUPABASE_ANON_KEY,
-        Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
+      headers: getSupabaseHeaders({
         "Content-Type": "application/json",
-      },
+      }),
       body: JSON.stringify(updates),
     });
 
@@ -190,10 +197,7 @@ async function deleteEventFromServer(id) {
   try {
     const res = await fetch(`${EVENTS_ENDPOINT}?id=eq.${id}`, {
       method: "DELETE",
-      headers: {
-        apikey: SUPABASE_ANON_KEY,
-        Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
-      },
+      headers: getSupabaseHeaders(),
     });
 
     if (!res.ok) {
