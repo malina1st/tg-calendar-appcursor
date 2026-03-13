@@ -95,7 +95,7 @@ function buildDatesRange(startDateStr, endDateStr) {
   return dates;
 }
 
-// Загрузить все события с сервера Supabase
+// Загрузить все события с сервера Supabase. При ошибке возвращает null (не перезаписывать локальные данные).
 async function fetchEventsFromServer() {
   try {
     const res = await fetch(`${EVENTS_ENDPOINT}?select=*`, {
@@ -104,7 +104,7 @@ async function fetchEventsFromServer() {
 
     if (!res.ok) {
       console.error("Ошибка ответа сервера", await res.text());
-      return [];
+      return null;
     }
 
     const rows = await res.json();
@@ -124,7 +124,7 @@ async function fetchEventsFromServer() {
     });
   } catch (e) {
     console.error("Ошибка загрузки с сервера", e);
-    return [];
+    return null;
   }
 }
 
@@ -762,15 +762,17 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
   }
 
-  // Сначала показываем локальные события (быстрый показ)
+  // Показываем события из localStorage
   state.events = loadEvents();
   renderYearCalendar();
   renderSidePanel();
 
-  // Загружаем события с сервера Supabase — всегда подменяем локальные данными с сервера
+  // Загружаем с сервера: при успехе подменяем и сохраняем в localStorage; при ошибке оставляем локальные
   const serverEvents = await fetchEventsFromServer();
-  state.events = serverEvents;
-  saveEvents(state.events);
-  renderYearCalendar();
-  renderSidePanel();
+  if (serverEvents !== null) {
+    state.events = serverEvents;
+    saveEvents(state.events);
+    renderYearCalendar();
+    renderSidePanel();
+  }
 });
