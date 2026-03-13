@@ -879,9 +879,17 @@ document.addEventListener("DOMContentLoaded", async () => {
     const appRoot = document.querySelector(".app");
     if (appRoot) {
       const uid = getTelegramUserId();
-      const idText = uid !== null ? `<br><br>Ваш ID в Telegram: <strong>${uid}</strong><br>Отправьте этот номер администратору для добавления доступа.` : "<br><br>ID не получен. Откройте календарь именно из бота в Telegram.";
+      const line1 = "У вас нет доступа к этому календарю.";
+      const line2 = uid !== null
+        ? "Ваш ID в Telegram: " + uid
+        : "ID не получен (откройте календарь из бота в Telegram).";
+      const line3 = "Напишите этот номер администратору — он добавит вас в список.";
       appRoot.innerHTML =
-        "<div style=\"padding:16px; text-align:center; font-size:0.9rem; color:#e5e7eb;\">У вас нет доступа к этому календарю." + idText + "</div>";
+        "<div style=\"padding:20px; text-align:center; color:#e5e7eb; max-width:320px; margin:0 auto;\">" +
+        "<p style=\"font-size:1rem; margin-bottom:16px;\">" + line1 + "</p>" +
+        "<p style=\"font-size:1.1rem; margin-bottom:16px; font-weight:bold; word-break:break-all;\">" + line2 + "</p>" +
+        "<p style=\"font-size:0.95rem; color:#9ca3af;\">" + line3 + "</p>" +
+        "</div>";
     }
     return;
   }
