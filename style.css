@@ -288,6 +288,44 @@
   margin-top: 2px;
 }
 
+.birthday-icon {
+  display: inline-block;
+  width: 20px;
+  height: 18px;
+  margin-left: 4px;
+  vertical-align: middle;
+  border-radius: 999px;
+  background:
+    /* конфетти сверху */
+    radial-gradient(circle at 20% 25%, #f97316 8%, transparent 9%),
+    radial-gradient(circle at 40% 20%, #22c55e 8%, transparent 9%),
+    radial-gradient(circle at 60% 25%, #3b82f6 8%, transparent 9%),
+    radial-gradient(circle at 80% 20%, #e11d48 8%, transparent 9%),
+    /* сам торт */
+    linear-gradient(#ffffff 55%, #f9a8d4 56%, #f9a8d4 100%);
+  border: 2px solid #f9a8d4;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.3);
+  position: relative;
+}
+
+.birthday-icon::before {
+  content: "";
+  position: absolute;
+  left: 4px;
+  right: 4px;
+  top: -8px;
+  height: 10px;
+  background:
+    /* три свечи */
+    linear-gradient(#3b82f6, #3b82f6) 0% 40% / 4px 60% no-repeat,
+    linear-gradient(#3b82f6, #3b82f6) 50% 40% / 4px 60% no-repeat,
+    linear-gradient(#3b82f6, #3b82f6) 100% 40% / 4px 60% no-repeat,
+    /* огонь */
+    radial-gradient(circle at 8% 0%, #f97316 40%, transparent 41%),
+    radial-gradient(circle at 50% 0%, #f97316 40%, transparent 41%),
+    radial-gradient(circle at 92% 0%, #f97316 40%, transparent 41%);
+}
+
 .modal-date {
   font-size: 0.8rem;
   color: #9ca3af;

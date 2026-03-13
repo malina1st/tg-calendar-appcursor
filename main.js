@@ -598,7 +598,7 @@ function openEventModal() {
 
   if (titleLabel) {
     if (isDmitryBirthday && dmitryAge !== null) {
-      titleLabel.innerHTML = `День рождения Дмитрия<br><span class="birthday-age-note">(исполняется ${dmitryAge} лет)</span>`;
+      titleLabel.innerHTML = `День рождения Дмитрия <span class="birthday-icon"></span><br><span class="birthday-age-note">(исполняется ${dmitryAge} лет)</span>`;
     } else {
       titleLabel.textContent = "События выбранной даты";
     }
