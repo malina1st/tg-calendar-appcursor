@@ -566,7 +566,7 @@
     background: #020617;
     border: 1px solid #1f2937;
     margin-bottom: 4px;
-    font-size: 0.8rem;
+    font-size: 1.2rem; /* было 0.8rem, увеличено на 50% */
   }
   
   .event-item-header {
@@ -620,7 +620,7 @@
 }
   
   .event-item-note {
-    font-size: 0.75rem;
+    font-size: 1.125rem; /* было 0.75rem, увеличено на 50% */
     color: #d1d5db;
     margin-top: 2px;
   }
