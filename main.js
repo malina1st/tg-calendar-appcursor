@@ -23,27 +23,37 @@ const ALLOWED_TELEGRAM_USER_IDS = [
   280705269, // Сабина
 ];
 
+function getTelegramUserId() {
+  if (!tg) return null;
+  // 1) Пробуем готовый объект (некоторые клиенты отдают его)
+  const unsafe = tg.initDataUnsafe || {};
+  let user = unsafe.user;
+  if (!user && tg.initData) {
+    // 2) Парсим сырую строку initData (формат: query_id=...&user=%7B%22id%22%3A123...%7D)
+    try {
+      const params = new URLSearchParams(tg.initData);
+      const userStr = params.get("user");
+      if (userStr) user = JSON.parse(decodeURIComponent(userStr));
+    } catch (e) {
+      // игнорируем ошибки парсинга
+    }
+  }
+  if (!user || (user.id !== undefined && user.id === null)) return null;
+  const id = typeof user.id === "number" ? user.id : parseInt(String(user.id), 10);
+  return Number.isNaN(id) ? null : id;
+}
+
 function isTelegramUserAllowed() {
   if (!tg) {
-    // Если не внутри Telegram (открыто в браузере) — по умолчанию разрешаем.
-    // Если нужно запретить, верните здесь false.
     return true;
   }
 
-  const unsafe = tg.initDataUnsafe || {};
-  const user = unsafe.user;
-  if (!user || (user.id !== undefined && user.id === null)) {
-    return false;
-  }
-
-  // Telegram может передать id как число или как строку — приводим к числу для сравнения
-  const userId = typeof user.id === "number" ? user.id : parseInt(String(user.id), 10);
-  if (Number.isNaN(userId)) {
+  const userId = getTelegramUserId();
+  if (userId === null) {
     return false;
   }
 
   if (ALLOWED_TELEGRAM_USER_IDS.length === 0) {
-    // Список не заполнен — никого не пускаем, чтобы не оставить доступ случайно открытым.
     return false;
   }
 
@@ -868,8 +878,10 @@ document.addEventListener("DOMContentLoaded", async () => {
   if (!isTelegramUserAllowed()) {
     const appRoot = document.querySelector(".app");
     if (appRoot) {
+      const uid = getTelegramUserId();
+      const idText = uid !== null ? `<br><br>Ваш ID в Telegram: <strong>${uid}</strong><br>Отправьте этот номер администратору для добавления доступа.` : "<br><br>ID не получен. Откройте календарь именно из бота в Telegram.";
       appRoot.innerHTML =
-        "<div style=\"padding:16px; text-align:center; font-size:0.9rem; color:#e5e7eb;\">У вас нет доступа к этому календарю.</div>";
+        "<div style=\"padding:16px; text-align:center; font-size:0.9rem; color:#e5e7eb;\">У вас нет доступа к этому календарю." + idText + "</div>";
     }
     return;
   }
