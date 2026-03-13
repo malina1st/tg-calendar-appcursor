@@ -345,9 +345,23 @@ function renderYearCalendar() {
 
   const todayStr = formatDate(new Date());
 
-  // Режим развёрнутого месяца: один месяц на всю ширину; тап вне месяца — возврат к году
+  // Режим развёрнутого месяца: тап вне месяца / вне блока событий / вне шапки — возврат к году
+  const appEl = document.querySelector(".app");
   const appMain = document.querySelector(".app-main");
+  const existingBackdrop = document.getElementById("month-expanded-backdrop");
+  if (existingBackdrop) existingBackdrop.remove();
+
   if (state.expandedMonth !== null) {
+    const backdrop = document.createElement("div");
+    backdrop.id = "month-expanded-backdrop";
+    backdrop.className = "month-expanded-backdrop";
+    backdrop.addEventListener("click", () => {
+      state.expandedMonth = null;
+      renderYearCalendar();
+      renderSidePanel();
+    });
+    document.body.appendChild(backdrop);
+
     const wrap = document.createElement("div");
     wrap.className = "month-expanded-wrap";
     wrap.addEventListener("click", (e) => {
@@ -364,10 +378,12 @@ function renderYearCalendar() {
     container.appendChild(wrap);
     container.classList.add("calendar-year-expanded");
     if (appMain) appMain.classList.add("month-expanded");
+    if (appEl) appEl.classList.add("month-expanded");
     return;
   }
   container.classList.remove("calendar-year-expanded");
   if (appMain) appMain.classList.remove("month-expanded");
+  if (appEl) appEl.classList.remove("month-expanded");
 
   for (let month = 0; month < 12; month++) {
     const card = buildMonthCard(month, eventsRangeByDate, todayStr, false);

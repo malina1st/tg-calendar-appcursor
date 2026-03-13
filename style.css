@@ -63,6 +63,23 @@
     gap: 8px;
   }
 
+  .month-expanded-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 25;
+    background: transparent;
+  }
+
+  .app.month-expanded .app-header {
+    position: relative;
+    z-index: 30;
+  }
+
+  .app.month-expanded .event-panel {
+    position: relative;
+    z-index: 30;
+  }
+
   .calendar-year.calendar-year-expanded {
     display: block;
     position: relative;
@@ -76,7 +93,7 @@
   .month-expanded-wrap {
     position: absolute;
     inset: 0;
-    z-index: 10;
+    z-index: 30;
     background: rgba(15, 23, 42, 0.9);
     overflow-y: auto;
     display: flex;
