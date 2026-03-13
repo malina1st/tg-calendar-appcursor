@@ -144,6 +144,9 @@
   border-left: 1px solid #f97316;
   border-right: none;
   border-radius: 999px 0 0 999px;
+  margin-right: -1px;
+  position: relative;
+  z-index: 1;
 }
 
 .day-range-middle {
@@ -152,6 +155,10 @@
   border-left: none;
   border-right: none;
   border-radius: 0;
+  margin-left: -1px;
+  margin-right: -1px;
+  position: relative;
+  z-index: 1;
 }
 
 .day-range-end {
@@ -160,6 +167,9 @@
   border-right: 1px solid #f97316;
   border-left: none;
   border-radius: 0 999px 999px 0;
+  margin-left: -1px;
+  position: relative;
+  z-index: 1;
 }
 
 .event-panel {
