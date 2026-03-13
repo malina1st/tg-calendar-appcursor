@@ -229,11 +229,36 @@ function renderYearCalendar() {
   container.innerHTML = "";
   yearLabel.textContent = `Год: ${state.year}`;
 
-  const eventsByDate = {};
+  // Карта "дата -> информация о диапазоне события"
+  const eventsRangeByDate = {};
   state.events.forEach((e) => {
-    e.dates.forEach((d) => {
-      eventsByDate[d] = true;
-    });
+    const startDate = e.startDate || (e.dates && e.dates[0]);
+    const endDate = e.endDate || startDate;
+    if (!startDate) return;
+
+    const rangeDates = buildDatesRange(startDate, endDate);
+
+    if (rangeDates.length === 1) {
+      const d = rangeDates[0];
+      if (!eventsRangeByDate[d]) {
+        eventsRangeByDate[d] = { single: true };
+      } else {
+        eventsRangeByDate[d].single = true;
+      }
+    } else {
+      rangeDates.forEach((d, idx) => {
+        if (!eventsRangeByDate[d]) {
+          eventsRangeByDate[d] = { single: false, start: false, middle: false, end: false };
+        }
+        if (idx === 0) {
+          eventsRangeByDate[d].start = true;
+        } else if (idx === rangeDates.length - 1) {
+          eventsRangeByDate[d].end = true;
+        } else {
+          eventsRangeByDate[d].middle = true;
+        }
+      });
+    }
   });
 
   const todayStr = formatDate(new Date());
@@ -291,24 +316,19 @@ function renderYearCalendar() {
         cell.classList.add("day-selected");
       }
 
-      const hasEvent = !!eventsByDate[dateStr];
-      if (hasEvent) {
-        const prevDateStr =
-          day > 1 ? formatDate(new Date(state.year, month, day - 1)) : null;
-        const nextDateStr =
-          day < daysInMonth ? formatDate(new Date(state.year, month, day + 1)) : null;
-
-        const prevHasEvent = prevDateStr ? !!eventsByDate[prevDateStr] : false;
-        const nextHasEvent = nextDateStr ? !!eventsByDate[nextDateStr] : false;
-
-        if (!prevHasEvent && !nextHasEvent) {
+      const rangeInfo = eventsRangeByDate[dateStr];
+      if (rangeInfo) {
+        if (rangeInfo.single && !rangeInfo.start && !rangeInfo.middle && !rangeInfo.end) {
           cell.classList.add("day-range-single");
-        } else if (!prevHasEvent && nextHasEvent) {
+        } else if (rangeInfo.start && !rangeInfo.middle && !rangeInfo.end) {
           cell.classList.add("day-range-start");
-        } else if (prevHasEvent && nextHasEvent) {
+        } else if (rangeInfo.middle && !rangeInfo.start && !rangeInfo.end) {
           cell.classList.add("day-range-middle");
-        } else if (prevHasEvent && !nextHasEvent) {
+        } else if (rangeInfo.end && !rangeInfo.start && !rangeInfo.middle) {
           cell.classList.add("day-range-end");
+        } else {
+          // если что-то наложилось странно, рисуем как одиночный
+          cell.classList.add("day-range-single");
         }
       }
 
