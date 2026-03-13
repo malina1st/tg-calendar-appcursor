@@ -436,6 +436,9 @@ function setupForm() {
 
     const title = titleInput.value.trim();
     const note = noteInput.value.trim();
+    const mode = form.dataset.mode || "create";
+    const editingId = form.dataset.eventId || null;
+
     const startDate = state.selectedDate;
     const startTime = (startTimeInput?.value || "").trim();
     const endDateRaw = (endDateInput?.value || "").trim();
@@ -452,38 +455,73 @@ function setupForm() {
 
     const datesRange = buildDatesRange(startDate, endDate);
 
-    const newEvent = {
-      id: Date.now().toString(),
-      startDate,
-      endDate,
-      startTime,
-      endTime,
-      dates: datesRange,
-      title,
-      note,
-    };
+    if (mode === "edit" && editingId) {
+      const idx = state.events.findIndex((e) => e.id === editingId);
+      if (idx === -1) return;
 
-    state.events.push(newEvent);
-    saveEvents(state.events);
+      const updatedEvent = {
+        ...state.events[idx],
+        startDate,
+        endDate,
+        startTime,
+        endTime,
+        dates: datesRange,
+        title,
+        note,
+      };
 
-    // Отправляем событие на сервер (асинхронно)
-    saveEventToServer(newEvent).then((saved) => {
-      if (saved) {
-        const idx = state.events.findIndex((e) => e.id === newEvent.id);
-        if (idx !== -1) {
-          state.events[idx] = saved;
-          saveEvents(state.events);
-          renderYearCalendar();
-          renderSidePanel();
+      state.events[idx] = updatedEvent;
+      saveEvents(state.events);
+
+      updateEventOnServer(editingId, {
+        date: startDate,
+        end_date: endDate,
+        start_time: startTime || null,
+        end_time: endTime || null,
+        title,
+        note: note || null,
+      });
+    } else {
+      const newEvent = {
+        id: Date.now().toString(),
+        startDate,
+        endDate,
+        startTime,
+        endTime,
+        dates: datesRange,
+        title,
+        note,
+      };
+
+      state.events.push(newEvent);
+      saveEvents(state.events);
+
+      // Отправляем событие на сервер (асинхронно)
+      saveEventToServer(newEvent).then((saved) => {
+        if (saved) {
+          const idx = state.events.findIndex((e) => e.id === newEvent.id);
+          if (idx !== -1) {
+            state.events[idx] = {
+              ...state.events[idx],
+              id: saved.id,
+            };
+            saveEvents(state.events);
+            renderYearCalendar();
+            renderSidePanel();
+          }
         }
-      }
-    });
+      });
+    }
 
     titleInput.value = "";
     noteInput.value = "";
     if (startTimeInput) startTimeInput.value = "";
     if (endDateInput) endDateInput.value = "";
     if (endTimeInput) endTimeInput.value = "";
+
+    // сбрасываем режим формы
+    form.dataset.mode = "create";
+    form.dataset.eventId = "";
 
     renderYearCalendar();
     renderSidePanel();
@@ -576,87 +614,35 @@ function openEventModal() {
         deleteBtn.textContent = "✕";
 
         editBtn.addEventListener("click", () => {
-          const newTitle = window.prompt("Новое описание события:", e.title);
-          if (newTitle === null) return;
-          const trimmedTitle = newTitle.trim();
-          if (!trimmedTitle) return;
+        // заполняем форму в модальном окне и переводим её в режим редактирования
+        const form = document.getElementById("event-form");
+        const titleInput = document.getElementById("event-title");
+        const noteInput = document.getElementById("event-note");
+        const startTimeInput = document.getElementById("event-start-time");
+        const endDateInput = document.getElementById("event-end-date");
+        const endTimeInput = document.getElementById("event-end-time");
+        const titleLabel = document.getElementById("event-modal-title");
 
-          const newNote = window.prompt(
-            "Новая заметка (можно оставить пустой):",
-            e.note || ""
-          );
-          if (newNote === null) return;
+        const startDate = e.startDate || (e.dates && e.dates[0]);
+        const endDate = e.endDate || startDate;
 
-          const currentStartDate = e.startDate || (e.dates && e.dates[0]);
-          const currentEndDate = e.endDate || currentStartDate;
+        state.selectedDate = startDate;
 
-          const newStartDateInput = window.prompt(
-            "Новая дата начала (ГГГГ-ММ-ДД, оставьте как есть если не меняете):",
-            currentStartDate
-          );
-          if (newStartDateInput === null) return;
-          const startDateTrimmed = newStartDateInput.trim() || currentStartDate;
+        if (form && titleInput && noteInput && startTimeInput && endDateInput && endTimeInput) {
+          form.classList.remove("hidden");
+          form.dataset.mode = "edit";
+          form.dataset.eventId = e.id;
 
-          const newEndDateInput = window.prompt(
-            "Новая дата конца (ГГГГ-ММ-ДД, оставьте как есть если не меняете):",
-            currentEndDate
-          );
-          if (newEndDateInput === null) return;
-          const endDateTrimmed = newEndDateInput.trim() || currentEndDate;
+          titleInput.value = e.title;
+          noteInput.value = e.note || "";
+          startTimeInput.value = e.startTime || "";
+          endDateInput.value = endDate;
+          endTimeInput.value = e.endTime || "";
+        }
 
-          const newStartTimeInput = window.prompt(
-            "Новое время начала (чч:мм, можно оставить пустым):",
-            e.startTime || ""
-          );
-          if (newStartTimeInput === null) return;
-          const startTimeTrimmed = newStartTimeInput.trim();
-
-          const newEndTimeInput = window.prompt(
-            "Новое время конца (чч:мм, можно оставить пустым):",
-            e.endTime || ""
-          );
-          if (newEndTimeInput === null) return;
-          const endTimeTrimmed = newEndTimeInput.trim();
-
-          let newStartDate = startDateTrimmed;
-          let newEndDate = endDateTrimmed || startDateTrimmed;
-
-          if (newEndDate < newStartDate) {
-            const tmp = newEndDate;
-            newEndDate = newStartDate;
-          }
-
-          const newDatesRange = buildDatesRange(newStartDate, newEndDate);
-
-          const idx = state.events.findIndex((ev) => ev.id === e.id);
-
-          if (idx !== -1) {
-            state.events[idx] = {
-              ...state.events[idx],
-              startDate: newStartDate,
-              endDate: newEndDate,
-              startTime: startTimeTrimmed,
-              endTime: endTimeTrimmed,
-              dates: newDatesRange,
-              title: trimmedTitle,
-              note: newNote.trim(),
-            };
-            saveEvents(state.events);
-            renderYearCalendar();
-            renderSidePanel();
-          }
-
-          updateEventOnServer(e.id, {
-            date: newStartDate,
-            end_date: newEndDate,
-            start_time: startTimeTrimmed || null,
-            end_time: endTimeTrimmed || null,
-            title: trimmedTitle,
-            note: newNote.trim() || null,
-          });
-
-          // Обновляем список в модальном окне
-          openEventModal();
+        if (titleLabel) {
+          titleLabel.textContent = "Редактирование события";
+        }
         });
 
         deleteBtn.addEventListener("click", () => {
