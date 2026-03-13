@@ -683,15 +683,19 @@ function openEventModal() {
     dateLabel.textContent = formatDateHuman(dateObj);
   }
 
-  // Особые дни рождения из списка BIRTHDAYS
-  const birthday = BIRTHDAYS.find(
+  // Особые дни рождения из списка BIRTHDAYS (на одну дату может быть несколько человек)
+  const birthdaysOnDate = BIRTHDAYS.filter(
     (b) => dateObj.getMonth() === b.month && dateObj.getDate() === b.day
   );
 
   if (titleLabel) {
-    if (birthday) {
-      const age = dateObj.getFullYear() - birthday.year;
-      titleLabel.innerHTML = `День рождения ${birthday.name} 🍰<br><span class="birthday-age-note">(исполняется ${age} лет)</span>`;
+    if (birthdaysOnDate.length > 0) {
+      titleLabel.innerHTML = birthdaysOnDate
+        .map((b) => {
+          const age = dateObj.getFullYear() - b.year;
+          return `День рождения ${b.name} 🍰<br><span class="birthday-age-note">(исполняется ${age} лет)</span>`;
+        })
+        .join('<br><br>');
     } else {
       titleLabel.textContent = "События выбранной даты";
     }
