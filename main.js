@@ -248,21 +248,8 @@ function renderYearCalendar() {
     const titleText = document.createElement("span");
     titleText.textContent = MONTH_NAMES[month];
 
-    const monthHasEvents = Object.keys(eventsByDate).some((d) => {
-      const [y, m] = d.split("-");
-      return Number(y) === state.year && Number(m) === month + 1;
-    });
-
     // Сначала добавляем название месяца слева
     title.appendChild(titleText);
-
-    // Если есть события — добавляем кружок справа, чтобы название не сдвигалось
-    if (monthHasEvents) {
-      const badge = document.createElement("span");
-      badge.className = "month-has-events";
-      badge.textContent = "●";
-      title.appendChild(badge);
-    }
     card.appendChild(title);
 
     const weekdaysRow = document.createElement("div");
