@@ -462,19 +462,45 @@ function buildMonthCard(month, eventsRangeByDate, todayStr, isExpanded) {
   return card;
 }
 
-// ============= РЕНДЕР ПРАВОЙ ПАНЕЛИ (БЛИЖАЙШИЕ СОБЫТИЯ) =============
-function renderSidePanel() {
-  const upcomingList = document.getElementById("upcoming-events");
+// События, попадающие в заданный месяц (год + месяц 0..11)
+function getEventsForMonth(events, year, month) {
+  const monthStart = formatDate(new Date(year, month, 1));
+  const monthEnd = formatDate(new Date(year, month + 1, 0));
+  return events.filter((e) => {
+    const start = e.startDate || (e.dates && e.dates[0]);
+    const end = e.endDate || start;
+    if (!start) return false;
+    return !(end < monthStart || start > monthEnd);
+  }).sort((a, b) => {
+    const d1 = a.startDate || (a.dates && a.dates[0]);
+    const d2 = b.startDate || (b.dates && b.dates[0]);
+    return (d1 || "").localeCompare(d2 || "");
+  });
+}
 
-  const upcoming = getUpcomingEvents(state.events, 3);
+// ============= РЕНДЕР ПРАВОЙ ПАНЕЛИ =============
+function renderSidePanel() {
+  const titleEl = document.getElementById("side-panel-title");
+  const upcomingList = document.getElementById("upcoming-events");
+  if (!upcomingList) return;
+
+  const isExpandedMonth = state.expandedMonth !== null;
+  if (titleEl) {
+    titleEl.textContent = isExpandedMonth ? "События этого месяца" : "Ближайшие события";
+  }
+
+  const list = isExpandedMonth
+    ? getEventsForMonth(state.events, state.year, state.expandedMonth)
+    : getUpcomingEvents(state.events, 3);
+
   upcomingList.innerHTML = "";
-  if (upcoming.length === 0) {
+  if (list.length === 0) {
     const li = document.createElement("li");
     li.className = "event-empty";
-    li.textContent = "Ближайших событий нет.";
+    li.textContent = isExpandedMonth ? "В этом месяце нет событий." : "Ближайших событий нет.";
     upcomingList.appendChild(li);
   } else {
-    upcoming.forEach((e) => {
+    list.forEach((e) => {
       const li = document.createElement("li");
       li.className = "event-item";
 
