@@ -717,9 +717,9 @@ function openEventModal() {
   if (titleInput) titleInput.value = "";
   if (noteInput) noteInput.value = "";
   if (startDateInput) startDateInput.value = state.selectedDate;
-  if (startTimeInput) startTimeInput.value = "";
+  if (startTimeInput) startTimeInput.value = "12:00";
   if (endDateInput) endDateInput.value = state.selectedDate;
-  if (endTimeInput) endTimeInput.value = "";
+  if (endTimeInput) endTimeInput.value = "12:00";
 
   // По умолчанию форма скрыта, пока не нажали "+"
   const form = document.getElementById("event-form");
