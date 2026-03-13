@@ -291,8 +291,25 @@ function renderYearCalendar() {
         cell.classList.add("day-selected");
       }
 
-      if (eventsByDate[dateStr]) {
-        cell.classList.add("day-has-event");
+      const hasEvent = !!eventsByDate[dateStr];
+      if (hasEvent) {
+        const prevDateStr =
+          day > 1 ? formatDate(new Date(state.year, month, day - 1)) : null;
+        const nextDateStr =
+          day < daysInMonth ? formatDate(new Date(state.year, month, day + 1)) : null;
+
+        const prevHasEvent = prevDateStr ? !!eventsByDate[prevDateStr] : false;
+        const nextHasEvent = nextDateStr ? !!eventsByDate[nextDateStr] : false;
+
+        if (!prevHasEvent && !nextHasEvent) {
+          cell.classList.add("day-range-single");
+        } else if (!prevHasEvent && nextHasEvent) {
+          cell.classList.add("day-range-start");
+        } else if (prevHasEvent && nextHasEvent) {
+          cell.classList.add("day-range-middle");
+        } else if (prevHasEvent && !nextHasEvent) {
+          cell.classList.add("day-range-end");
+        }
       }
 
       cell.addEventListener("click", () => {

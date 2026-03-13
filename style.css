@@ -127,12 +127,42 @@
     border: 1px solid #22c55e;
   }
   
-  .day-selected {
-    background: #1d4ed8;
-    color: #e5e7eb;
-  }
-  
-  .event-panel {
+.day-selected {
+  background: #1d4ed8;
+  color: #e5e7eb;
+}
+
+/* Диапазоны событий (несколько дней подряд) */
+.day-range-single {
+  border: 1px solid #f97316;
+  border-radius: 999px;
+}
+
+.day-range-start {
+  border-top: 1px solid #f97316;
+  border-bottom: 1px solid #f97316;
+  border-left: 1px solid #f97316;
+  border-right: none;
+  border-radius: 999px 0 0 999px;
+}
+
+.day-range-middle {
+  border-top: 1px solid #f97316;
+  border-bottom: 1px solid #f97316;
+  border-left: none;
+  border-right: none;
+  border-radius: 0;
+}
+
+.day-range-end {
+  border-top: 1px solid #f97316;
+  border-bottom: 1px solid #f97316;
+  border-right: 1px solid #f97316;
+  border-left: none;
+  border-radius: 0 999px 999px 0;
+}
+
+.event-panel {
     flex: 1;
     background: #020617;
     border-radius: 10px;
