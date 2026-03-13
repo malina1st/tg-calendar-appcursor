@@ -507,7 +507,6 @@ function setupForm() {
   const titleInput = document.getElementById("event-title");
   const noteInput = document.getElementById("event-note");
   const locationInput = document.getElementById("event-location");
-  const locationInput = document.getElementById("event-location");
   const startDateInput = document.getElementById("event-start-date");
   const startTimeInput = document.getElementById("event-start-time");
   const endDateInput = document.getElementById("event-end-date");
