@@ -87,19 +87,18 @@
   .calendar-year.calendar-year-expanded {
     display: block;
     position: relative;
-    min-height: 320px;
+    min-height: 0;
   }
 
   .app-main.month-expanded .calendar-year {
-    min-height: 70vh;
+    min-height: 0;
+    flex-shrink: 0;
   }
 
   .month-expanded-wrap {
-    position: absolute;
-    inset: 0;
+    position: relative;
     z-index: 30;
     background: rgba(15, 23, 42, 0.9);
-    overflow-y: auto;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -289,7 +288,7 @@
   }
 
   .app-main.month-expanded .event-panel {
-    margin-top: 24px;
+    margin-top: 12px;
   }
 
   .event-panel h2 {
