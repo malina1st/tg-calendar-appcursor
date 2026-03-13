@@ -207,7 +207,7 @@
 
 .event-datetime-row {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 6px;
 }
 
@@ -343,6 +343,7 @@
   
 #event-title,
 #event-note,
+#event-start-date,
 #event-start-time,
 #event-end-date,
 #event-end-time {
@@ -355,6 +356,7 @@
   
 #event-title:focus,
 #event-note:focus,
+#event-start-date:focus,
 #event-start-time:focus,
 #event-end-date:focus,
 #event-end-time:focus {

@@ -424,6 +424,7 @@ function setupForm() {
   const form = document.getElementById("event-form");
   const titleInput = document.getElementById("event-title");
   const noteInput = document.getElementById("event-note");
+  const startDateInput = document.getElementById("event-start-date");
   const startTimeInput = document.getElementById("event-start-time");
   const endDateInput = document.getElementById("event-end-date");
   const endTimeInput = document.getElementById("event-end-time");
@@ -439,7 +440,8 @@ function setupForm() {
     const mode = form.dataset.mode || "create";
     const editingId = form.dataset.eventId || null;
 
-    const startDate = state.selectedDate;
+    const startDateRaw = (startDateInput?.value || "").trim();
+    const startDate = startDateRaw || state.selectedDate;
     const startTime = (startTimeInput?.value || "").trim();
     const endDateRaw = (endDateInput?.value || "").trim();
     const endTime = (endTimeInput?.value || "").trim();
@@ -515,6 +517,7 @@ function setupForm() {
 
     titleInput.value = "";
     noteInput.value = "";
+    if (startDateInput) startDateInput.value = "";
     if (startTimeInput) startTimeInput.value = "";
     if (endDateInput) endDateInput.value = "";
     if (endTimeInput) endTimeInput.value = "";
@@ -561,6 +564,7 @@ function openEventModal() {
   const modalEventsList = document.getElementById("modal-events-for-date");
   const titleInput = document.getElementById("event-title");
   const noteInput = document.getElementById("event-note");
+  const startDateInput = document.getElementById("event-start-date");
   const startTimeInput = document.getElementById("event-start-time");
   const endDateInput = document.getElementById("event-end-date");
   const endTimeInput = document.getElementById("event-end-time");
@@ -618,6 +622,7 @@ function openEventModal() {
         const form = document.getElementById("event-form");
         const titleInput = document.getElementById("event-title");
         const noteInput = document.getElementById("event-note");
+        const startDateInput = document.getElementById("event-start-date");
         const startTimeInput = document.getElementById("event-start-time");
         const endDateInput = document.getElementById("event-end-date");
         const endTimeInput = document.getElementById("event-end-time");
@@ -628,13 +633,14 @@ function openEventModal() {
 
         state.selectedDate = startDate;
 
-        if (form && titleInput && noteInput && startTimeInput && endDateInput && endTimeInput) {
+        if (form && titleInput && noteInput && startDateInput && startTimeInput && endDateInput && endTimeInput) {
           form.classList.remove("hidden");
           form.dataset.mode = "edit";
           form.dataset.eventId = e.id;
 
           titleInput.value = e.title;
           noteInput.value = e.note || "";
+          startDateInput.value = startDate;
           startTimeInput.value = e.startTime || "";
           endDateInput.value = endDate;
           endTimeInput.value = e.endTime || "";
@@ -710,6 +716,7 @@ function openEventModal() {
 
   if (titleInput) titleInput.value = "";
   if (noteInput) noteInput.value = "";
+  if (startDateInput) startDateInput.value = state.selectedDate;
   if (startTimeInput) startTimeInput.value = "";
   if (endDateInput) endDateInput.value = state.selectedDate;
   if (endTimeInput) endTimeInput.value = "";
