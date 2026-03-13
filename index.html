@@ -39,10 +39,20 @@
   <!-- Модальное окно добавления/редактирования события -->
   <div id="event-modal" class="modal hidden">
     <div class="modal-dialog">
-      <h2 class="modal-title">Новое событие</h2>
-      <p class="modal-date" id="event-modal-date"></p>
+      <div class="modal-header">
+        <div>
+          <h2 class="modal-title" id="event-modal-title">События выбранной даты</h2>
+          <p class="modal-date" id="event-modal-date"></p>
+        </div>
+        <button type="button" id="event-open-form-button" class="modal-add-button">+</button>
+      </div>
 
-      <form id="event-form">
+      <div class="events-list-container">
+        <h3>События</h3>
+        <ul id="modal-events-for-date"></ul>
+      </div>
+
+      <form id="event-form" class="hidden">
         <label>
           Описание события
           <textarea id="event-title" placeholder="Например: День рождения мамы" required></textarea>

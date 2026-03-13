@@ -534,6 +534,7 @@ function setupForm() {
   const endDateInput = document.getElementById("event-end-date");
   const endTimeInput = document.getElementById("event-end-time");
   const cancelButton = document.getElementById("event-cancel-button");
+  const openFormButton = document.getElementById("event-open-form-button");
 
   form.addEventListener("submit", (e) => {
     e.preventDefault();
@@ -604,11 +605,21 @@ function setupForm() {
       closeEventModal();
     });
   }
+
+  if (openFormButton) {
+    openFormButton.addEventListener("click", () => {
+      if (form) {
+        form.classList.remove("hidden");
+      }
+    });
+  }
 }
 
 function openEventModal() {
   const modal = document.getElementById("event-modal");
   const dateLabel = document.getElementById("event-modal-date");
+  const titleLabel = document.getElementById("event-modal-title");
+  const modalEventsList = document.getElementById("modal-events-for-date");
   const titleInput = document.getElementById("event-title");
   const noteInput = document.getElementById("event-note");
   const startTimeInput = document.getElementById("event-start-time");
@@ -622,11 +633,85 @@ function openEventModal() {
     dateLabel.textContent = formatDateHuman(dateObj);
   }
 
+  if (titleLabel) {
+    titleLabel.textContent = "События выбранной даты";
+  }
+
+  // Заполняем список событий для выбранной даты в модальном окне
+  if (modalEventsList) {
+    modalEventsList.innerHTML = "";
+    const eventsForDate = state.events.filter(
+      (e) => e.dates && e.dates.includes(state.selectedDate)
+    );
+
+    if (eventsForDate.length === 0) {
+      const li = document.createElement("li");
+      li.className = "event-empty";
+      li.textContent = "На эту дату пока нет событий.";
+      modalEventsList.appendChild(li);
+    } else {
+      eventsForDate.forEach((e) => {
+        const li = document.createElement("li");
+        li.className = "event-item";
+
+        const header = document.createElement("div");
+        header.className = "event-item-header";
+
+        const title = document.createElement("div");
+        title.className = "event-item-title";
+        title.textContent = e.title;
+        header.appendChild(title);
+        li.appendChild(header);
+
+        const dateLabelEl = document.createElement("div");
+        dateLabelEl.className = "event-item-date";
+
+        const startDate = e.startDate || (e.dates && e.dates[0]);
+        const endDate = e.endDate || startDate;
+        const sameDay = startDate === endDate;
+
+        const startDateObj = new Date(startDate);
+        const endDateObj = new Date(endDate);
+
+        const startDateText = formatDateHuman(startDateObj);
+        const endDateText = formatDateHuman(endDateObj);
+
+        let text = "";
+        if (sameDay) {
+          text = startDateText;
+        } else {
+          text = `с ${startDateText} до ${endDateText}`;
+        }
+
+        if (e.startTime || e.endTime) {
+          const timePart = `${e.startTime || ""}${e.endTime ? `–${e.endTime}` : ""}`;
+          text = sameDay ? `${startDateText}, ${timePart}` : `${text}, ${timePart}`;
+        }
+
+        dateLabelEl.textContent = text;
+        li.appendChild(dateLabelEl);
+
+        if (e.note) {
+          const note = document.createElement("div");
+          note.className = "event-item-note";
+          note.textContent = e.note;
+          li.appendChild(note);
+        }
+
+        modalEventsList.appendChild(li);
+      });
+    }
+  }
+
   if (titleInput) titleInput.value = "";
   if (noteInput) noteInput.value = "";
   if (startTimeInput) startTimeInput.value = "";
   if (endDateInput) endDateInput.value = state.selectedDate;
   if (endTimeInput) endTimeInput.value = "";
+
+  // По умолчанию форма скрыта, пока не нажали "+"
+  const form = document.getElementById("event-form");
+  if (form) form.classList.add("hidden");
 
   modal.classList.remove("hidden");
 }

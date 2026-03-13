@@ -205,6 +205,13 @@
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.8);
 }
 
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
 .modal-title {
   font-size: 1rem;
   margin-bottom: 4px;
@@ -213,7 +220,26 @@
 .modal-date {
   font-size: 0.8rem;
   color: #9ca3af;
-  margin-bottom: 8px;
+  margin-top: 2px;
+}
+
+.modal-add-button {
+  width: 28px;
+  height: 28px;
+  border-radius: 999px;
+  border: 1px solid #1f2937;
+  background: #020617;
+  color: #e5e7eb;
+  font-size: 1.1rem;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-add-button:hover {
+  background: #111827;
 }
 
 .modal-actions {
