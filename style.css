@@ -66,7 +66,11 @@
   .calendar-year.calendar-year-expanded {
     display: block;
     position: relative;
-    min-height: 200px;
+    min-height: 320px;
+  }
+
+  .app-main.month-expanded .calendar-year {
+    min-height: 70vh;
   }
 
   .month-expanded-wrap {
@@ -262,7 +266,11 @@
     padding: 10px;
     border: 1px solid #111827;
   }
-  
+
+  .app-main.month-expanded .event-panel {
+    margin-top: 24px;
+  }
+
   .event-panel h2 {
     font-size: 1rem;
     margin-bottom: 4px;

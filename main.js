@@ -346,6 +346,7 @@ function renderYearCalendar() {
   const todayStr = formatDate(new Date());
 
   // Режим развёрнутого месяца: один месяц на всю ширину; тап вне месяца — возврат к году
+  const appMain = document.querySelector(".app-main");
   if (state.expandedMonth !== null) {
     const wrap = document.createElement("div");
     wrap.className = "month-expanded-wrap";
@@ -362,9 +363,11 @@ function renderYearCalendar() {
     wrap.appendChild(card);
     container.appendChild(wrap);
     container.classList.add("calendar-year-expanded");
+    if (appMain) appMain.classList.add("month-expanded");
     return;
   }
   container.classList.remove("calendar-year-expanded");
+  if (appMain) appMain.classList.remove("month-expanded");
 
   for (let month = 0; month < 12; month++) {
     const card = buildMonthCard(month, eventsRangeByDate, todayStr, false);
