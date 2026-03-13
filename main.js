@@ -146,9 +146,15 @@ async function saveEventToServer(event) {
     }
 
     const [row] = await res.json();
+    const startDate = row.date;
+    const endDate = row.end_date || row.date;
     return {
       id: row.id,
-      dates: [row.date],
+      startDate,
+      endDate,
+      startTime: row.start_time || "",
+      endTime: row.end_time || "",
+      dates: buildDatesRange(startDate, endDate),
       title: row.title,
       note: row.note || "",
     };
@@ -752,17 +758,15 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
   }
 
-  // Сначала показываем локальные события (если уже что-то есть в localStorage)
+  // Сначала показываем локальные события (быстрый показ)
   state.events = loadEvents();
   renderYearCalendar();
   renderSidePanel();
 
-  // Потом пробуем загрузить свежие события с сервера Supabase
+  // Загружаем события с сервера Supabase — всегда подменяем локальные данными с сервера
   const serverEvents = await fetchEventsFromServer();
-  if (serverEvents.length > 0) {
-    state.events = serverEvents;
-    saveEvents(state.events); // обновим локальный кеш
-    renderYearCalendar();
-    renderSidePanel();
-  }
+  state.events = serverEvents;
+  saveEvents(state.events);
+  renderYearCalendar();
+  renderSidePanel();
 });
