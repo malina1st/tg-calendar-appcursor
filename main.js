@@ -261,6 +261,7 @@ async function deleteEventFromServer(id) {
 const state = {
   year: new Date().getFullYear(),
   selectedDate: null, // по умолчанию дата не выбрана
+  expandedMonth: null, // 0..11 — развёрнутый месяц на весь экран; null — вид года
   events: loadEvents(), // [{ id, startDate, endDate, dates:[YYYY-MM-DD], title, note, startTime, endTime }]
 };
 
@@ -344,103 +345,121 @@ function renderYearCalendar() {
 
   const todayStr = formatDate(new Date());
 
+  // Режим развёрнутого месяца: один месяц на всю ширину + кнопка «Назад»
+  if (state.expandedMonth !== null) {
+    const wrap = document.createElement("div");
+    wrap.className = "month-expanded-wrap";
+    const backBtn = document.createElement("button");
+    backBtn.type = "button";
+    backBtn.className = "month-expanded-back";
+    backBtn.textContent = "← К году";
+    backBtn.addEventListener("click", () => {
+      state.expandedMonth = null;
+      renderYearCalendar();
+      renderSidePanel();
+    });
+    wrap.appendChild(backBtn);
+    const card = buildMonthCard(state.expandedMonth, eventsRangeByDate, todayStr, true);
+    card.classList.add("month-card-expanded");
+    wrap.appendChild(card);
+    container.appendChild(wrap);
+    container.classList.add("calendar-year-expanded");
+    return;
+  }
+  container.classList.remove("calendar-year-expanded");
+
   for (let month = 0; month < 12; month++) {
-    const card = document.createElement("div");
-    card.className = "month-card";
-
-    const title = document.createElement("div");
-    title.className = "month-title";
-
-    const titleText = document.createElement("span");
-    titleText.textContent = MONTH_NAMES[month];
-
-    // Сначала добавляем название месяца слева
-    title.appendChild(titleText);
-    card.appendChild(title);
-
-    const weekdaysRow = document.createElement("div");
-    weekdaysRow.className = "weekdays";
-    WEEKDAY_SHORT.forEach((w) => {
-      const el = document.createElement("div");
-      el.className = "weekday";
-      el.textContent = w;
-      weekdaysRow.appendChild(el);
-    });
-    card.appendChild(weekdaysRow);
-
-    const daysGrid = document.createElement("div");
-    daysGrid.className = "days-grid";
-
-    const firstDay = new Date(state.year, month, 1);
-    const firstWeekday = (firstDay.getDay() + 6) % 7; // Пн=0 ... Вс=6
-    const daysInMonth = new Date(state.year, month + 1, 0).getDate();
-
-    for (let i = 0; i < firstWeekday; i++) {
-      const empty = document.createElement("div");
-      empty.className = "day-cell empty";
-      daysGrid.appendChild(empty);
-    }
-
-    for (let day = 1; day <= daysInMonth; day++) {
-      const dateObj = new Date(state.year, month, day);
-      const dateStr = formatDate(dateObj);
-
-      const cell = document.createElement("div");
-      cell.className = "day-cell";
-      cell.textContent = day;
-
-      if (dateStr === todayStr) {
-        cell.classList.add("day-today");
-      }
-
-      if (state.selectedDate && dateStr === state.selectedDate) {
-        cell.classList.add("day-selected");
-      }
-
-      // Особые даты: любые дни рождения из списка BIRTHDAYS подсвечиваем фиолетовым цветом числа
-      const isBirthdayDate = BIRTHDAYS.some(
-        (b) =>
-          dateObj.getMonth() === b.month && dateObj.getDate() === b.day
-      );
-      if (isBirthdayDate) {
-        cell.classList.add("day-birthday");
-      }
-
-      const rangeInfo = eventsRangeByDate[dateStr];
-      if (rangeInfo) {
-        if (rangeInfo.single && !rangeInfo.start && !rangeInfo.middle && !rangeInfo.end) {
-          cell.classList.add("day-range-single");
-        } else if (rangeInfo.start && !rangeInfo.middle && !rangeInfo.end) {
-          cell.classList.add("day-range-start");
-        } else if (rangeInfo.middle && !rangeInfo.start && !rangeInfo.end) {
-          cell.classList.add("day-range-middle");
-        } else if (rangeInfo.end && !rangeInfo.start && !rangeInfo.middle) {
-          cell.classList.add("day-range-end");
-        } else {
-          // если что-то наложилось странно, рисуем как одиночный
-          cell.classList.add("day-range-single");
-        }
-      }
-
-      cell.addEventListener("click", () => {
-        state.selectedDate = dateStr;
-        renderYearCalendar();
-        renderSidePanel();
-        openEventModal();
-      });
-
-      daysGrid.appendChild(cell);
-    }
-
-    card.appendChild(daysGrid);
-
+    const card = buildMonthCard(month, eventsRangeByDate, todayStr, false);
     card.addEventListener("click", (e) => {
-      // По клику на месяц просто используем клик по дате (у нас уже есть).
-      // Для версии 1 оставим детальный полноэкранный месяц на будущее.
+      if (e.target.closest(".day-cell")) return;
+      state.expandedMonth = month;
+      renderYearCalendar();
+      renderSidePanel();
     });
-
     container.appendChild(card);
   }
+}
+
+function buildMonthCard(month, eventsRangeByDate, todayStr, isExpanded) {
+  const card = document.createElement("div");
+  card.className = "month-card";
+
+  const title = document.createElement("div");
+  title.className = "month-title";
+  const titleText = document.createElement("span");
+  titleText.textContent = MONTH_NAMES[month];
+  title.appendChild(titleText);
+  card.appendChild(title);
+
+  const weekdaysRow = document.createElement("div");
+  weekdaysRow.className = "weekdays";
+  WEEKDAY_SHORT.forEach((w) => {
+    const el = document.createElement("div");
+    el.className = "weekday";
+    el.textContent = w;
+    weekdaysRow.appendChild(el);
+  });
+  card.appendChild(weekdaysRow);
+
+  const daysGrid = document.createElement("div");
+  daysGrid.className = "days-grid";
+
+  const firstDay = new Date(state.year, month, 1);
+  const firstWeekday = (firstDay.getDay() + 6) % 7;
+  const daysInMonth = new Date(state.year, month + 1, 0).getDate();
+
+  for (let i = 0; i < firstWeekday; i++) {
+    const empty = document.createElement("div");
+    empty.className = "day-cell empty";
+    daysGrid.appendChild(empty);
+  }
+
+  for (let day = 1; day <= daysInMonth; day++) {
+    const dateObj = new Date(state.year, month, day);
+    const dateStr = formatDate(dateObj);
+
+    const cell = document.createElement("div");
+    cell.className = "day-cell";
+    cell.textContent = day;
+    cell.dataset.date = dateStr;
+
+    if (dateStr === todayStr) cell.classList.add("day-today");
+    if (state.selectedDate && dateStr === state.selectedDate) cell.classList.add("day-selected");
+
+    const isBirthdayDate = BIRTHDAYS.some(
+      (b) => dateObj.getMonth() === b.month && dateObj.getDate() === b.day
+    );
+    if (isBirthdayDate) cell.classList.add("day-birthday");
+
+    const rangeInfo = eventsRangeByDate[dateStr];
+    if (rangeInfo) {
+      if (rangeInfo.single && !rangeInfo.start && !rangeInfo.middle && !rangeInfo.end) {
+        cell.classList.add("day-range-single");
+      } else if (rangeInfo.start && !rangeInfo.middle && !rangeInfo.end) {
+        cell.classList.add("day-range-start");
+      } else if (rangeInfo.middle && !rangeInfo.start && !rangeInfo.end) {
+        cell.classList.add("day-range-middle");
+      } else if (rangeInfo.end && !rangeInfo.start && !rangeInfo.middle) {
+        cell.classList.add("day-range-end");
+      } else {
+        cell.classList.add("day-range-single");
+      }
+    }
+
+    cell.addEventListener("click", (e) => {
+      const clickedDate = e.currentTarget.dataset.date;
+      if (!clickedDate) return;
+      state.selectedDate = clickedDate;
+      renderYearCalendar();
+      renderSidePanel();
+      openEventModal();
+    });
+
+    daysGrid.appendChild(cell);
+  }
+
+  card.appendChild(daysGrid);
+  return card;
 }
 
 // ============= РЕНДЕР ПРАВОЙ ПАНЕЛИ (БЛИЖАЙШИЕ СОБЫТИЯ) =============

@@ -62,6 +62,61 @@
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 8px;
   }
+
+  .calendar-year.calendar-year-expanded {
+    display: block;
+  }
+
+  .month-expanded-wrap {
+    width: 100%;
+  }
+
+  .month-expanded-back {
+    display: block;
+    width: 100%;
+    margin-bottom: 10px;
+    padding: 8px 12px;
+    border-radius: 8px;
+    border: 1px solid #1f2937;
+    background: #111827;
+    color: #e5e7eb;
+    font-size: 0.95rem;
+    cursor: pointer;
+    text-align: left;
+  }
+
+  .month-expanded-back:hover {
+    background: #1f2937;
+  }
+
+  .month-card-expanded {
+    width: 100%;
+    max-width: 100%;
+    padding: 12px;
+  }
+
+  .month-card-expanded .month-title {
+    font-size: 1.2rem;
+    margin-bottom: 8px;
+  }
+
+  .month-card-expanded .weekdays,
+  .month-card-expanded .days-grid {
+    font-size: 0.85rem;
+  }
+
+  .month-card-expanded .day-cell {
+    min-height: 36px;
+    font-size: 1rem;
+    padding: 6px 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .month-card-expanded .day-cell.empty {
+    min-height: 36px;
+  }
   
   @media (min-width: 900px) {
     .calendar-year {
@@ -139,11 +194,14 @@
     min-height: 20px;
     position: relative;
     font-size: 0.7rem;
+    cursor: pointer;
   }
   
 .day-birthday {
-  color: #a855f7; /* фиолетовый текст для дня рождения Дмитрия */
+  color: #a855f7; /* фиолетовый текст для дня рождения */
   font-weight: 700;
+  position: relative;
+  z-index: 2;
 }
 
   .day-cell.empty {
