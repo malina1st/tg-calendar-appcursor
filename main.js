@@ -789,6 +789,12 @@ function closeEventModal() {
   renderSidePanel();
 }
 
+function changeYear(delta) {
+  state.year += delta;
+  renderYearCalendar();
+  renderSidePanel();
+}
+
 // ============= ИНИЦИАЛИЗАЦИЯ =============
 document.addEventListener("DOMContentLoaded", async () => {
   setupForm();
@@ -799,6 +805,23 @@ document.addEventListener("DOMContentLoaded", async () => {
     modalOverlay.addEventListener("click", (e) => {
       if (e.target === modalOverlay) {
         closeEventModal();
+      }
+    });
+  }
+
+  // Клик по году для смены года
+  const yearLabel = document.getElementById("current-year");
+  if (yearLabel) {
+    yearLabel.style.cursor = "pointer";
+    yearLabel.title = "Нажмите, чтобы переключить год";
+    yearLabel.addEventListener("click", () => {
+      const nextYear = prompt("Введите год (например, 2027):", String(state.year));
+      if (!nextYear) return;
+      const y = parseInt(nextYear, 10);
+      if (!Number.isNaN(y) && y >= 1900 && y <= 2100) {
+        state.year = y;
+        renderYearCalendar();
+        renderSidePanel();
       }
     });
   }
