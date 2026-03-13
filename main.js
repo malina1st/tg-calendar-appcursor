@@ -567,11 +567,57 @@ function openEventModal() {
           );
           if (newNote === null) return;
 
+          const currentStartDate = e.startDate || (e.dates && e.dates[0]);
+          const currentEndDate = e.endDate || currentStartDate;
+
+          const newStartDateInput = window.prompt(
+            "Новая дата начала (ГГГГ-ММ-ДД, оставьте как есть если не меняете):",
+            currentStartDate
+          );
+          if (newStartDateInput === null) return;
+          const startDateTrimmed = newStartDateInput.trim() || currentStartDate;
+
+          const newEndDateInput = window.prompt(
+            "Новая дата конца (ГГГГ-ММ-ДД, оставьте как есть если не меняете):",
+            currentEndDate
+          );
+          if (newEndDateInput === null) return;
+          const endDateTrimmed = newEndDateInput.trim() || currentEndDate;
+
+          const newStartTimeInput = window.prompt(
+            "Новое время начала (чч:мм, можно оставить пустым):",
+            e.startTime || ""
+          );
+          if (newStartTimeInput === null) return;
+          const startTimeTrimmed = newStartTimeInput.trim();
+
+          const newEndTimeInput = window.prompt(
+            "Новое время конца (чч:мм, можно оставить пустым):",
+            e.endTime || ""
+          );
+          if (newEndTimeInput === null) return;
+          const endTimeTrimmed = newEndTimeInput.trim();
+
+          let newStartDate = startDateTrimmed;
+          let newEndDate = endDateTrimmed || startDateTrimmed;
+
+          if (newEndDate < newStartDate) {
+            const tmp = newEndDate;
+            newEndDate = newStartDate;
+          }
+
+          const newDatesRange = buildDatesRange(newStartDate, newEndDate);
+
           const idx = state.events.findIndex((ev) => ev.id === e.id);
 
           if (idx !== -1) {
             state.events[idx] = {
               ...state.events[idx],
+              startDate: newStartDate,
+              endDate: newEndDate,
+              startTime: startTimeTrimmed,
+              endTime: endTimeTrimmed,
+              dates: newDatesRange,
               title: trimmedTitle,
               note: newNote.trim(),
             };
@@ -581,6 +627,10 @@ function openEventModal() {
           }
 
           updateEventOnServer(e.id, {
+            date: newStartDate,
+            end_date: newEndDate,
+            start_time: startTimeTrimmed || null,
+            end_time: endTimeTrimmed || null,
             title: trimmedTitle,
             note: newNote.trim() || null,
           });
