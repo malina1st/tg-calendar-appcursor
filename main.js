@@ -591,13 +591,14 @@ function openEventModal() {
     dateLabel.textContent = formatDateHuman(dateObj);
   }
 
-  // Если выбрана дата 19 мая — показываем фиксированную подпись
+  // Если выбрана дата 19 мая — показываем фиксированную подпись с возрастом (от 19.05.1987)
   const isDmitryBirthday =
     dateObj.getMonth() === 4 && dateObj.getDate() === 19;
+  const dmitryAge = isDmitryBirthday ? dateObj.getFullYear() - 1987 : null;
 
   if (titleLabel) {
     titleLabel.textContent = isDmitryBirthday
-      ? "День рождения Дмитрия"
+      ? `День рождения Дмитрия (исполняется ${dmitryAge} лет)`
       : "События выбранной даты";
   }
 
