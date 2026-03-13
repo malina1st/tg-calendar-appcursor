@@ -301,6 +301,7 @@ function renderYearCalendar() {
         state.selectedDate = dateStr;
         renderYearCalendar();
         renderSidePanel();
+        openEventModal();
       });
 
       daysGrid.appendChild(cell);
@@ -323,18 +324,13 @@ function renderSidePanel() {
   const eventsForDateList = document.getElementById("events-for-date");
   const upcomingList = document.getElementById("upcoming-events");
   const panelTitle = document.getElementById("event-panel-title");
-  const eventForm = document.getElementById("event-form");
   const dateEventsContainer = document.getElementById("date-events-container");
 
   if (!state.selectedDate) {
-    // Дата не выбрана: скрываем форму и блок "События выбранной даты"
-    selectedDateLabel.textContent = "";
+    selectedDateLabel.textContent = "Дата не выбрана. Выберите день в календаре.";
     eventsForDateList.innerHTML = "";
-    if (eventForm) eventForm.classList.add("hidden");
     if (dateEventsContainer) dateEventsContainer.classList.add("hidden");
   } else {
-    // Показать форму и блок "События выбранной даты"
-    if (eventForm) eventForm.classList.remove("hidden");
     if (dateEventsContainer) dateEventsContainer.classList.remove("hidden");
 
     panelTitle.textContent = "События";
@@ -537,6 +533,7 @@ function setupForm() {
   const startTimeInput = document.getElementById("event-start-time");
   const endDateInput = document.getElementById("event-end-date");
   const endTimeInput = document.getElementById("event-end-time");
+  const cancelButton = document.getElementById("event-cancel-button");
 
   form.addEventListener("submit", (e) => {
     e.preventDefault();
@@ -598,7 +595,46 @@ function setupForm() {
     if (tg) {
       tg.HapticFeedback.notificationOccurred("success");
     }
+
+    closeEventModal();
   });
+
+  if (cancelButton) {
+    cancelButton.addEventListener("click", () => {
+      closeEventModal();
+    });
+  }
+}
+
+function openEventModal() {
+  const modal = document.getElementById("event-modal");
+  const dateLabel = document.getElementById("event-modal-date");
+  const titleInput = document.getElementById("event-title");
+  const noteInput = document.getElementById("event-note");
+  const startTimeInput = document.getElementById("event-start-time");
+  const endDateInput = document.getElementById("event-end-date");
+  const endTimeInput = document.getElementById("event-end-time");
+
+  if (!modal || !state.selectedDate) return;
+
+  const dateObj = new Date(state.selectedDate);
+  if (dateLabel) {
+    dateLabel.textContent = formatDateHuman(dateObj);
+  }
+
+  if (titleInput) titleInput.value = "";
+  if (noteInput) noteInput.value = "";
+  if (startTimeInput) startTimeInput.value = "";
+  if (endDateInput) endDateInput.value = state.selectedDate;
+  if (endTimeInput) endTimeInput.value = "";
+
+  modal.classList.remove("hidden");
+}
+
+function closeEventModal() {
+  const modal = document.getElementById("event-modal");
+  if (!modal) return;
+  modal.classList.add("hidden");
 }
 
 // ============= ИНИЦИАЛИЗАЦИЯ =============

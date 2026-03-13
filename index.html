@@ -23,37 +23,6 @@
         <h2 id="event-panel-title"></h2>
         <div class="selected-date" id="selected-date"></div>
 
-        <form id="event-form">
-          <label>
-            Описание события
-            <textarea id="event-title" placeholder="Например: День рождения мамы" required></textarea>
-          </label>
-
-          <div class="event-datetime-row">
-            <label>
-              Время начала
-              <input id="event-start-time" type="time" />
-            </label>
-
-            <label>
-              Дата конца
-              <input id="event-end-date" type="date" />
-            </label>
-
-            <label>
-              Время конца
-              <input id="event-end-time" type="time" />
-            </label>
-          </div>
-
-          <label>
-            Доп. заметка (необязательно)
-            <input id="event-note" type="text" placeholder="Адрес, время и т.п." />
-          </label>
-
-          <button type="submit">Сохранить событие</button>
-        </form>
-
         <div class="events-list-container" id="date-events-container">
           <h3>События выбранной даты</h3>
           <ul id="events-for-date"></ul>
@@ -65,6 +34,48 @@
         </div>
       </section>
     </main>
+  </div>
+
+  <!-- Модальное окно добавления/редактирования события -->
+  <div id="event-modal" class="modal hidden">
+    <div class="modal-dialog">
+      <h2 class="modal-title">Новое событие</h2>
+      <p class="modal-date" id="event-modal-date"></p>
+
+      <form id="event-form">
+        <label>
+          Описание события
+          <textarea id="event-title" placeholder="Например: День рождения мамы" required></textarea>
+        </label>
+
+        <div class="event-datetime-row">
+          <label>
+            Время начала
+            <input id="event-start-time" type="time" />
+          </label>
+
+          <label>
+            Дата конца
+            <input id="event-end-date" type="date" />
+          </label>
+
+          <label>
+            Время конца
+            <input id="event-end-time" type="time" />
+          </label>
+        </div>
+
+        <label>
+          Доп. заметка (необязательно)
+          <input id="event-note" type="text" placeholder="Адрес, время и т.п." />
+        </label>
+
+        <div class="modal-actions">
+          <button type="button" id="event-cancel-button">Отмена</button>
+          <button type="submit">Сохранить</button>
+        </div>
+      </form>
+    </div>
   </div>
 
   <!-- Подключаем логику -->
