@@ -80,6 +80,10 @@
     z-index: 30;
   }
 
+  .app.month-expanded .app-main {
+    flex-direction: column;
+  }
+
   .calendar-year.calendar-year-expanded {
     display: block;
     position: relative;
