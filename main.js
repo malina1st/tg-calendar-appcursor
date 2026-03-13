@@ -32,7 +32,13 @@ function isTelegramUserAllowed() {
 
   const unsafe = tg.initDataUnsafe || {};
   const user = unsafe.user;
-  if (!user || typeof user.id !== "number") {
+  if (!user || (user.id !== undefined && user.id === null)) {
+    return false;
+  }
+
+  // Telegram может передать id как число или как строку — приводим к числу для сравнения
+  const userId = typeof user.id === "number" ? user.id : parseInt(String(user.id), 10);
+  if (Number.isNaN(userId)) {
     return false;
   }
 
@@ -41,7 +47,7 @@ function isTelegramUserAllowed() {
     return false;
   }
 
-  return ALLOWED_TELEGRAM_USER_IDS.includes(user.id);
+  return ALLOWED_TELEGRAM_USER_IDS.includes(userId);
 }
 
 // Заголовки для Supabase: ключ sb_publishable_ передаём только в apikey, JWT (eyJ) — в apikey и Authorization
