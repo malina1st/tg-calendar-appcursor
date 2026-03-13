@@ -738,6 +738,16 @@ function closeEventModal() {
 document.addEventListener("DOMContentLoaded", async () => {
   setupForm();
 
+  // Закрытие модального окна по тапу вне окна (по затемнённому фону)
+  const modalOverlay = document.getElementById("event-modal");
+  if (modalOverlay) {
+    modalOverlay.addEventListener("click", (e) => {
+      if (e.target === modalOverlay) {
+        closeEventModal();
+      }
+    });
+  }
+
   // Сначала показываем локальные события (если уже что-то есть в localStorage)
   state.events = loadEvents();
   renderYearCalendar();
