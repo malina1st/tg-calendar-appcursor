@@ -280,6 +280,14 @@
   margin-bottom: 4px;
 }
 
+.birthday-age-note {
+  display: block;
+  font-size: 0.64rem; /* примерно на 20% меньше */
+  font-weight: 400;
+  color: #a855f7;
+  margin-top: 2px;
+}
+
 .modal-date {
   font-size: 0.8rem;
   color: #9ca3af;
