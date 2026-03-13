@@ -541,7 +541,63 @@ function openEventModal() {
         const title = document.createElement("div");
         title.className = "event-item-title";
         title.textContent = e.title;
+
+        const actions = document.createElement("div");
+        actions.className = "event-item-actions";
+
+        const editBtn = document.createElement("button");
+        editBtn.type = "button";
+        editBtn.className = "event-item-button";
+        editBtn.textContent = "✏"; // значок карандаша
+
+        editBtn.addEventListener("click", () => {
+          const newTitle = window.prompt("Новое описание события:", e.title);
+          if (newTitle === null) return;
+          const trimmedTitle = newTitle.trim();
+          if (!trimmedTitle) return;
+
+          const newNote = window.prompt(
+            "Новая заметка (можно оставить пустой):",
+            e.note || ""
+          );
+          if (newNote === null) return;
+
+          const shouldDelete = window.confirm("Удалить это событие? Нажмите Отмена, чтобы только сохранить изменения.");
+          const idx = state.events.findIndex((ev) => ev.id === e.id);
+
+          if (shouldDelete) {
+            if (idx !== -1) {
+              state.events = state.events.filter((ev) => ev.id !== e.id);
+              saveEvents(state.events);
+              renderYearCalendar();
+              renderSidePanel();
+            }
+            deleteEventFromServer(e.id);
+          } else {
+            if (idx !== -1) {
+              state.events[idx] = {
+                ...state.events[idx],
+                title: trimmedTitle,
+                note: newNote.trim(),
+              };
+              saveEvents(state.events);
+              renderYearCalendar();
+              renderSidePanel();
+            }
+            updateEventOnServer(e.id, {
+              title: trimmedTitle,
+              note: newNote.trim() || null,
+            });
+          }
+
+          // Обновляем список в модальном окне
+          openEventModal();
+        });
+
+        actions.appendChild(editBtn);
+
         header.appendChild(title);
+        header.appendChild(actions);
         li.appendChild(header);
 
         const dateLabelEl = document.createElement("div");
