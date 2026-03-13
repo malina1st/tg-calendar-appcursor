@@ -535,6 +535,7 @@ function setupForm() {
   const endTimeInput = document.getElementById("event-end-time");
   const cancelButton = document.getElementById("event-cancel-button");
   const openFormButton = document.getElementById("event-open-form-button");
+  const closeButton = document.getElementById("event-close-button");
 
   form.addEventListener("submit", (e) => {
     e.preventDefault();
@@ -611,6 +612,12 @@ function setupForm() {
       if (form) {
         form.classList.remove("hidden");
       }
+    });
+  }
+
+  if (closeButton) {
+    closeButton.addEventListener("click", () => {
+      closeEventModal();
     });
   }
 }

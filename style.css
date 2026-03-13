@@ -212,6 +212,12 @@
   margin-bottom: 8px;
 }
 
+.modal-header-buttons {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
 .modal-title {
   font-size: 1rem;
   margin-bottom: 4px;
@@ -240,6 +246,26 @@
 
 .modal-add-button:hover {
   background: #111827;
+}
+
+.modal-close-button {
+  width: 28px;
+  height: 28px;
+  border-radius: 999px;
+  border: 1px solid #1f2937;
+  background: #020617;
+  color: #9ca3af;
+  font-size: 1.1rem;
+  lineHeight: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-close-button:hover {
+  background: #111827;
+  color: #e5e7eb;
 }
 
 .modal-actions {
