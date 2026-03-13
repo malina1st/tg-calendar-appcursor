@@ -539,8 +539,65 @@ function renderSidePanel() {
       dateLabel.textContent = text;
 
       header.appendChild(title);
-      header.appendChild(dateLabel);
+      if (isExpandedMonth) {
+        const actions = document.createElement("div");
+        actions.className = "event-item-actions";
+        const editBtn = document.createElement("button");
+        editBtn.type = "button";
+        editBtn.className = "event-item-button event-item-button-pen";
+        editBtn.textContent = "✏";
+        const deleteBtn = document.createElement("button");
+        deleteBtn.type = "button";
+        deleteBtn.className = "event-item-button event-item-button-delete";
+        deleteBtn.textContent = "✕";
+
+        editBtn.addEventListener("click", () => {
+          const form = document.getElementById("event-form");
+          const titleInput = document.getElementById("event-title");
+          const noteInput = document.getElementById("event-note");
+          const locationInput = document.getElementById("event-location");
+          const startDateInput = document.getElementById("event-start-date");
+          const startTimeInput = document.getElementById("event-start-time");
+          const endDateInput = document.getElementById("event-end-date");
+          const endTimeInput = document.getElementById("event-end-time");
+          const titleLabel = document.getElementById("event-modal-title");
+          state.selectedDate = startDate;
+          openEventModal();
+          if (form && titleInput && noteInput && locationInput && startDateInput && startTimeInput && endDateInput && endTimeInput) {
+            form.classList.remove("hidden");
+            form.dataset.mode = "edit";
+            form.dataset.eventId = e.id;
+            titleInput.value = e.title;
+            noteInput.value = e.note || "";
+            locationInput.value = e.location || "";
+            startDateInput.value = startDate;
+            startTimeInput.value = e.startTime || "";
+            endDateInput.value = endDate;
+            endTimeInput.value = e.endTime || "";
+          }
+          if (titleLabel) titleLabel.textContent = "Редактирование события";
+        });
+
+        deleteBtn.addEventListener("click", () => {
+          if (!window.confirm("Удалить это событие?")) return;
+          const idx = state.events.findIndex((ev) => ev.id === e.id);
+          if (idx !== -1) {
+            state.events = state.events.filter((ev) => ev.id !== e.id);
+            saveEvents(state.events);
+            renderYearCalendar();
+            renderSidePanel();
+          }
+          deleteEventFromServer(e.id);
+        });
+
+        actions.appendChild(editBtn);
+        actions.appendChild(deleteBtn);
+        header.appendChild(actions);
+      } else {
+        header.appendChild(dateLabel);
+      }
       li.appendChild(header);
+      if (isExpandedMonth) li.appendChild(dateLabel);
 
       if (e.note) {
         const note = document.createElement("div");
