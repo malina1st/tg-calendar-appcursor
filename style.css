@@ -68,31 +68,23 @@
   }
 
   .month-expanded-wrap {
-    width: 100%;
-  }
-
-  .month-expanded-back {
-    display: block;
-    width: 100%;
-    margin-bottom: 10px;
-    padding: 8px 12px;
-    border-radius: 8px;
-    border: 1px solid #1f2937;
-    background: #111827;
-    color: #e5e7eb;
-    font-size: 0.95rem;
-    cursor: pointer;
-    text-align: left;
-  }
-
-  .month-expanded-back:hover {
-    background: #1f2937;
+    position: fixed;
+    inset: 0;
+    z-index: 30;
+    background: rgba(15, 23, 42, 0.85);
+    overflow-y: auto;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 16px;
+    box-sizing: border-box;
   }
 
   .month-card-expanded {
     width: 100%;
-    max-width: 100%;
+    max-width: 480px;
     padding: 12px;
+    flex-shrink: 0;
   }
 
   .month-card-expanded .month-title {

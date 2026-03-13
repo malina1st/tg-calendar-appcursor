@@ -345,22 +345,20 @@ function renderYearCalendar() {
 
   const todayStr = formatDate(new Date());
 
-  // Режим развёрнутого месяца: один месяц на всю ширину + кнопка «Назад»
+  // Режим развёрнутого месяца: один месяц на всю ширину; тап вне месяца — возврат к году
   if (state.expandedMonth !== null) {
     const wrap = document.createElement("div");
     wrap.className = "month-expanded-wrap";
-    const backBtn = document.createElement("button");
-    backBtn.type = "button";
-    backBtn.className = "month-expanded-back";
-    backBtn.textContent = "← К году";
-    backBtn.addEventListener("click", () => {
-      state.expandedMonth = null;
-      renderYearCalendar();
-      renderSidePanel();
+    wrap.addEventListener("click", (e) => {
+      if (e.target === wrap) {
+        state.expandedMonth = null;
+        renderYearCalendar();
+        renderSidePanel();
+      }
     });
-    wrap.appendChild(backBtn);
     const card = buildMonthCard(state.expandedMonth, eventsRangeByDate, todayStr, true);
     card.classList.add("month-card-expanded");
+    card.addEventListener("click", (e) => e.stopPropagation());
     wrap.appendChild(card);
     container.appendChild(wrap);
     container.classList.add("calendar-year-expanded");
