@@ -811,17 +811,63 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   // Клик по году для смены года
   const yearLabel = document.getElementById("current-year");
-  if (yearLabel) {
-    yearLabel.style.cursor = "pointer";
-    yearLabel.title = "Нажмите, чтобы переключить год";
-    yearLabel.addEventListener("click", () => {
-      const nextYear = prompt("Введите год (например, 2027):", String(state.year));
-      if (!nextYear) return;
-      const y = parseInt(nextYear, 10);
+  const yearPickerModal = document.getElementById("year-picker-modal");
+  const yearPickerValue = document.getElementById("year-picker-value");
+  const yearPickerInc = document.getElementById("year-picker-inc");
+  const yearPickerDec = document.getElementById("year-picker-dec");
+  const yearPickerOk = document.getElementById("year-picker-ok");
+
+  function openYearPicker() {
+    if (!yearPickerModal || !yearPickerValue) return;
+    yearPickerValue.textContent = String(state.year);
+    yearPickerModal.classList.remove("hidden");
+  }
+
+  function closeYearPicker(apply) {
+    if (!yearPickerModal || !yearPickerValue) return;
+    if (apply) {
+      const y = parseInt(yearPickerValue.textContent, 10);
       if (!Number.isNaN(y) && y >= 1900 && y <= 2100) {
         state.year = y;
         renderYearCalendar();
         renderSidePanel();
+      }
+    }
+    yearPickerModal.classList.add("hidden");
+  }
+
+  if (yearLabel) {
+    yearLabel.addEventListener("click", openYearPicker);
+  }
+
+  if (yearPickerInc && yearPickerValue) {
+    yearPickerInc.addEventListener("click", () => {
+      let y = parseInt(yearPickerValue.textContent, 10) || state.year;
+      if (y < 2100) {
+        y += 1;
+        yearPickerValue.textContent = String(y);
+      }
+    });
+  }
+
+  if (yearPickerDec && yearPickerValue) {
+    yearPickerDec.addEventListener("click", () => {
+      let y = parseInt(yearPickerValue.textContent, 10) || state.year;
+      if (y > 1900) {
+        y -= 1;
+        yearPickerValue.textContent = String(y);
+      }
+    });
+  }
+
+  if (yearPickerOk) {
+    yearPickerOk.addEventListener("click", () => closeYearPicker(true));
+  }
+
+  if (yearPickerModal) {
+    yearPickerModal.addEventListener("click", (e) => {
+      if (e.target === yearPickerModal) {
+        closeYearPicker(false);
       }
     });
   }
