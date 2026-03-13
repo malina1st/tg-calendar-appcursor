@@ -505,6 +505,7 @@
   
 #event-title,
 #event-note,
+#event-location,
 #event-start-date,
 #event-start-time,
 #event-end-date,
@@ -518,6 +519,7 @@
   
 #event-title:focus,
 #event-note:focus,
+#event-location:focus,
 #event-start-date:focus,
 #event-start-time:focus,
 #event-end-date:focus,
@@ -621,6 +623,18 @@
     font-size: 0.75rem;
     color: #d1d5db;
     margin-top: 2px;
+  }
+
+  .event-item-location {
+    display: inline-block;
+    margin-top: 2px;
+    font-size: 0.8rem;
+    color: #60a5fa;
+    text-decoration: underline;
+  }
+
+  .event-item-location:hover {
+    color: #93c5fd;
   }
   
   .event-empty {

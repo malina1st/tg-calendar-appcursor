@@ -149,6 +149,7 @@ async function fetchEventsFromServer() {
         dates: buildDatesRange(startDate, endDate),
         title: row.title,
         note: row.note || "",
+        location: row.location_url || "",
       };
     });
   } catch (e) {
@@ -167,6 +168,7 @@ async function saveEventToServer(event) {
       end_time: event.endTime || null,
       title: event.title,
       note: event.note || null,
+      location_url: event.location || null,
     };
 
     const res = await fetch(EVENTS_ENDPOINT, {
@@ -484,6 +486,16 @@ function renderSidePanel() {
         li.appendChild(note);
       }
 
+      if (e.location) {
+        const loc = document.createElement("a");
+        loc.href = e.location;
+        loc.target = "_blank";
+        loc.rel = "noopener noreferrer";
+        loc.className = "event-item-location";
+        loc.textContent = "Открыть в навигаторе";
+        li.appendChild(loc);
+      }
+
       upcomingList.appendChild(li);
     });
   }
@@ -494,6 +506,8 @@ function setupForm() {
   const form = document.getElementById("event-form");
   const titleInput = document.getElementById("event-title");
   const noteInput = document.getElementById("event-note");
+  const locationInput = document.getElementById("event-location");
+  const locationInput = document.getElementById("event-location");
   const startDateInput = document.getElementById("event-start-date");
   const startTimeInput = document.getElementById("event-start-time");
   const endDateInput = document.getElementById("event-end-date");
@@ -507,6 +521,7 @@ function setupForm() {
 
     const title = titleInput.value.trim();
     const note = noteInput.value.trim();
+    const location = (locationInput?.value || "").trim();
     const mode = form.dataset.mode || "create";
     const editingId = form.dataset.eventId || null;
 
@@ -540,6 +555,7 @@ function setupForm() {
         dates: datesRange,
         title,
         note,
+        location,
       };
 
       state.events[idx] = updatedEvent;
@@ -552,6 +568,7 @@ function setupForm() {
         end_time: endTime || null,
         title,
         note: note || null,
+        location_url: location || null,
       });
     } else {
       const newEvent = {
@@ -563,6 +580,7 @@ function setupForm() {
         dates: datesRange,
         title,
         note,
+        location,
       };
 
       state.events.push(newEvent);
@@ -587,6 +605,7 @@ function setupForm() {
 
     titleInput.value = "";
     noteInput.value = "";
+    if (locationInput) locationInput.value = "";
     if (startDateInput) startDateInput.value = "";
     if (startTimeInput) startTimeInput.value = "";
     if (endDateInput) endDateInput.value = "";
@@ -634,6 +653,7 @@ function openEventModal() {
   const modalEventsList = document.getElementById("modal-events-for-date");
   const titleInput = document.getElementById("event-title");
   const noteInput = document.getElementById("event-note");
+  const locationInput = document.getElementById("event-location");
   const startDateInput = document.getElementById("event-start-date");
   const startTimeInput = document.getElementById("event-start-time");
   const endDateInput = document.getElementById("event-end-date");
@@ -713,13 +733,14 @@ function openEventModal() {
 
         state.selectedDate = startDate;
 
-        if (form && titleInput && noteInput && startDateInput && startTimeInput && endDateInput && endTimeInput) {
+        if (form && titleInput && noteInput && locationInput && startDateInput && startTimeInput && endDateInput && endTimeInput) {
           form.classList.remove("hidden");
           form.dataset.mode = "edit";
           form.dataset.eventId = e.id;
 
           titleInput.value = e.title;
           noteInput.value = e.note || "";
+          locationInput.value = e.location || "";
           startDateInput.value = startDate;
           startTimeInput.value = e.startTime || "";
           endDateInput.value = endDate;
@@ -787,6 +808,16 @@ function openEventModal() {
           note.className = "event-item-note";
           note.textContent = e.note;
           li.appendChild(note);
+        }
+
+        if (e.location) {
+          const loc = document.createElement("a");
+          loc.href = e.location;
+          loc.target = "_blank";
+          loc.rel = "noopener noreferrer";
+          loc.className = "event-item-location";
+          loc.textContent = "Открыть в навигаторе";
+          li.appendChild(loc);
         }
 
         modalEventsList.appendChild(li);
