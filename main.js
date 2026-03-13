@@ -547,8 +547,13 @@ function openEventModal() {
 
         const editBtn = document.createElement("button");
         editBtn.type = "button";
-        editBtn.className = "event-item-button";
+        editBtn.className = "event-item-button event-item-button-pen";
         editBtn.textContent = "✏"; // значок карандаша
+
+        const deleteBtn = document.createElement("button");
+        deleteBtn.type = "button";
+        deleteBtn.className = "event-item-button event-item-button-delete";
+        deleteBtn.textContent = "✕";
 
         editBtn.addEventListener("click", () => {
           const newTitle = window.prompt("Новое описание события:", e.title);
@@ -562,39 +567,46 @@ function openEventModal() {
           );
           if (newNote === null) return;
 
-          const shouldDelete = window.confirm("Удалить это событие? Нажмите Отмена, чтобы только сохранить изменения.");
           const idx = state.events.findIndex((ev) => ev.id === e.id);
 
-          if (shouldDelete) {
-            if (idx !== -1) {
-              state.events = state.events.filter((ev) => ev.id !== e.id);
-              saveEvents(state.events);
-              renderYearCalendar();
-              renderSidePanel();
-            }
-            deleteEventFromServer(e.id);
-          } else {
-            if (idx !== -1) {
-              state.events[idx] = {
-                ...state.events[idx],
-                title: trimmedTitle,
-                note: newNote.trim(),
-              };
-              saveEvents(state.events);
-              renderYearCalendar();
-              renderSidePanel();
-            }
-            updateEventOnServer(e.id, {
+          if (idx !== -1) {
+            state.events[idx] = {
+              ...state.events[idx],
               title: trimmedTitle,
-              note: newNote.trim() || null,
-            });
+              note: newNote.trim(),
+            };
+            saveEvents(state.events);
+            renderYearCalendar();
+            renderSidePanel();
           }
+
+          updateEventOnServer(e.id, {
+            title: trimmedTitle,
+            note: newNote.trim() || null,
+          });
 
           // Обновляем список в модальном окне
           openEventModal();
         });
 
+        deleteBtn.addEventListener("click", () => {
+          const confirmed = window.confirm("Удалить это событие?");
+          if (!confirmed) return;
+
+          const idx = state.events.findIndex((ev) => ev.id === e.id);
+          if (idx !== -1) {
+            state.events = state.events.filter((ev) => ev.id !== e.id);
+            saveEvents(state.events);
+            renderYearCalendar();
+            renderSidePanel();
+          }
+
+          deleteEventFromServer(e.id);
+          openEventModal();
+        });
+
         actions.appendChild(editBtn);
+        actions.appendChild(deleteBtn);
 
         header.appendChild(title);
         header.appendChild(actions);
