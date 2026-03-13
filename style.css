@@ -65,16 +65,18 @@
 
   .calendar-year.calendar-year-expanded {
     display: block;
+    position: relative;
+    min-height: 200px;
   }
 
   .month-expanded-wrap {
-    position: fixed;
+    position: absolute;
     inset: 0;
-    z-index: 30;
-    background: rgba(15, 23, 42, 0.85);
+    z-index: 10;
+    background: rgba(15, 23, 42, 0.9);
     overflow-y: auto;
     display: flex;
-    align-items: flex-start;
+    align-items: center;
     justify-content: center;
     padding: 16px;
     box-sizing: border-box;
