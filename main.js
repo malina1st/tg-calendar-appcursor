@@ -597,9 +597,11 @@ function openEventModal() {
   const dmitryAge = isDmitryBirthday ? dateObj.getFullYear() - 1987 : null;
 
   if (titleLabel) {
-    titleLabel.textContent = isDmitryBirthday
-      ? `День рождения Дмитрия (исполняется ${dmitryAge} лет)`
-      : "События выбранной даты";
+    if (isDmitryBirthday && dmitryAge !== null) {
+      titleLabel.innerHTML = `День рождения Дмитрия<br><span class="birthday-age-note">(исполняется ${dmitryAge} лет)</span>`;
+    } else {
+      titleLabel.textContent = "События выбранной даты";
+    }
   }
 
   // Заполняем список событий для выбранной даты в модальном окне
