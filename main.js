@@ -732,6 +732,10 @@ function closeEventModal() {
   const modal = document.getElementById("event-modal");
   if (!modal) return;
   modal.classList.add("hidden");
+
+  state.selectedDate = null;
+  renderYearCalendar();
+  renderSidePanel();
 }
 
 // ============= ИНИЦИАЛИЗАЦИЯ =============
