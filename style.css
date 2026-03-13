@@ -97,10 +97,14 @@
     gap: 2px;
   }
   
-  .weekdays {
-    margin-bottom: 2px;
-    color: #6b7280;
-  }
+.weekdays {
+  margin-bottom: 2px;
+  color: #6b7280;
+  border-top: 1px solid #4b5563;
+  border-bottom: 1px solid #4b5563;
+  padding-top: 2px;
+  padding-bottom: 2px;
+}
   
 .weekday {
   text-align: center;
