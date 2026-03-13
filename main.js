@@ -231,6 +231,28 @@ const MONTH_NAMES = [
   "Декабрь",
 ];
 
+// Особые дни рождения (месяцы: 0 - январь, 11 - декабрь)
+const BIRTHDAYS = [
+  { name: "Дмитрия", day: 19, month: 4, year: 1987 },
+  { name: "Риты", day: 15, month: 4, year: 1992 },
+  { name: "Сергея", day: 26, month: 4, year: 1992 },
+  { name: "Екатерины", day: 26, month: 2, year: 1993 },
+  { name: "Сабины", day: 26, month: 2, year: 1992 },
+  { name: "Станислава", day: 22, month: 0, year: 1987 },
+  { name: "Полины", day: 30, month: 11, year: 1992 },
+  { name: "Елены", day: 12, month: 0, year: 1991 },
+  { name: "Никиты", day: 19, month: 7, year: 1991 },
+  { name: "Карины", day: 28, month: 6, year: 1994 },
+  { name: "Рустика", day: 31, month: 0, year: 1991 },
+  { name: "Лейлы", day: 28, month: 0, year: 1996 },
+  { name: "Михаила", day: 18, month: 5, year: 1991 },
+  { name: "Валентины", day: 10, month: 0, year: 1989 },
+  { name: "Марины", day: 25, month: 3, year: 1995 },
+  { name: "Кости", day: 9, month: 6, year: 1991 },
+  { name: "Даши", day: 26, month: 5, year: 1995 },
+  { name: "Андрея", day: 10, month: 11, year: 1990 },
+];
+
 const WEEKDAY_SHORT = ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс"];
 
 function renderYearCalendar() {
@@ -326,8 +348,12 @@ function renderYearCalendar() {
         cell.classList.add("day-selected");
       }
 
-      // Особые даты: дни рождения Дмитрия (19 мая) и Риты (15 мая) — подсвечиваем фиолетовым цветом числа
-      if (dateObj.getMonth() === 4 && (dateObj.getDate() === 19 || dateObj.getDate() === 15)) {
+      // Особые даты: любые дни рождения из списка BIRTHDAYS подсвечиваем фиолетовым цветом числа
+      const isBirthdayDate = BIRTHDAYS.some(
+        (b) =>
+          dateObj.getMonth() === b.month && dateObj.getDate() === b.day
+      );
+      if (isBirthdayDate) {
         cell.classList.add("day-birthday");
       }
 
@@ -591,20 +617,15 @@ function openEventModal() {
     dateLabel.textContent = formatDateHuman(dateObj);
   }
 
-  // Особые дни рождения: Дмитрия (19.05.1987) и Риты (15.05.1992)
-  const isDmitryBirthday =
-    dateObj.getMonth() === 4 && dateObj.getDate() === 19;
-  const isRitaBirthday =
-    dateObj.getMonth() === 4 && dateObj.getDate() === 15;
-
-  const dmitryAge = isDmitryBirthday ? dateObj.getFullYear() - 1987 : null;
-  const ritaAge = isRitaBirthday ? dateObj.getFullYear() - 1992 : null;
+  // Особые дни рождения из списка BIRTHDAYS
+  const birthday = BIRTHDAYS.find(
+    (b) => dateObj.getMonth() === b.month && dateObj.getDate() === b.day
+  );
 
   if (titleLabel) {
-    if (isDmitryBirthday && dmitryAge !== null) {
-      titleLabel.innerHTML = `День рождения Дмитрия 🍰<br><span class="birthday-age-note">(исполняется ${dmitryAge} лет)</span>`;
-    } else if (isRitaBirthday && ritaAge !== null) {
-      titleLabel.innerHTML = `День рождения Риты 🍰<br><span class="birthday-age-note">(исполняется ${ritaAge} лет)</span>`;
+    if (birthday) {
+      const age = dateObj.getFullYear() - birthday.year;
+      titleLabel.innerHTML = `День рождения ${birthday.name} 🍰<br><span class="birthday-age-note">(исполняется ${age} лет)</span>`;
     } else {
       titleLabel.textContent = "События выбранной даты";
     }
