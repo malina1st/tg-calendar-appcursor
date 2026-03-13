@@ -26,15 +26,18 @@
     margin-bottom: 4px;
   }
   
-  .app-header p {
-    color: #9ca3af;
-    font-size: 0.9rem;
-  }
+.app-header p {
+  color: #9ca3af;
+  font-size: 0.9rem;
+}
 
 #current-year {
+  margin-top: 4px;
+}
+
+.current-year-number {
   display: inline-block;
   padding: 2px 10px;
-  margin-top: 4px;
   border: 1px solid #ffffff;
   border-radius: 999px;
   cursor: pointer;

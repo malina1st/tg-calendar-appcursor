@@ -259,7 +259,7 @@ function renderYearCalendar() {
   const container = document.getElementById("calendar-year");
   const yearLabel = document.getElementById("current-year");
   container.innerHTML = "";
-  yearLabel.textContent = `Год: ${state.year}`;
+  yearLabel.innerHTML = `Год: <span class="current-year-number">${state.year}</span>`;
 
   // Карта "дата -> информация о диапазоне события"
   const eventsRangeByDate = {};
@@ -837,7 +837,15 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 
   if (yearLabel) {
-    yearLabel.addEventListener("click", openYearPicker);
+    yearLabel.addEventListener("click", (e) => {
+      const target = e.target;
+      if (
+        target instanceof HTMLElement &&
+        target.classList.contains("current-year-number")
+      ) {
+        openYearPicker();
+      }
+    });
   }
 
   if (yearPickerInc && yearPickerValue) {
