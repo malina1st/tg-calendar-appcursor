@@ -189,8 +189,11 @@
     min-height: 50px;
   }
   
-  #event-title,
-  #event-note {
+#event-title,
+#event-note,
+#event-start-time,
+#event-end-date,
+#event-end-time {
     border-radius: 6px;
     border: 1px solid #1f2937;
     padding: 4px 6px;
@@ -198,8 +201,11 @@
     color: #e5e7eb;
   }
   
-  #event-title:focus,
-  #event-note:focus {
+#event-title:focus,
+#event-note:focus,
+#event-start-time:focus,
+#event-end-date:focus,
+#event-end-time:focus {
     outline: none;
     border-color: #2563eb;
     box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.4);
