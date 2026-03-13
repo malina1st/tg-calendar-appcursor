@@ -18,6 +18,7 @@ const EVENTS_ENDPOINT = `${SUPABASE_URL}/rest/v1/events`;
 // const ALLOWED_TELEGRAM_USER_IDS = [123456789, 987654321, ...];
 const ALLOWED_TELEGRAM_USER_IDS = [
   231645712, // Дмитрий
+  343074507, // Рита
 ];
 
 function isTelegramUserAllowed() {
