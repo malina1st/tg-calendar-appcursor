@@ -326,6 +326,11 @@ function renderYearCalendar() {
         cell.classList.add("day-selected");
       }
 
+      // Особая дата: день рождения Дмитрия — 19 мая (подсвечиваем фиолетовым цветом числа)
+      if (dateObj.getMonth() === 4 && dateObj.getDate() === 19) {
+        cell.classList.add("day-birthday");
+      }
+
       const rangeInfo = eventsRangeByDate[dateStr];
       if (rangeInfo) {
         if (rangeInfo.single && !rangeInfo.start && !rangeInfo.middle && !rangeInfo.end) {
@@ -586,8 +591,14 @@ function openEventModal() {
     dateLabel.textContent = formatDateHuman(dateObj);
   }
 
+  // Если выбрана дата 19 мая — показываем фиксированную подпись
+  const isDmitryBirthday =
+    dateObj.getMonth() === 4 && dateObj.getDate() === 19;
+
   if (titleLabel) {
-    titleLabel.textContent = "События выбранной даты";
+    titleLabel.textContent = isDmitryBirthday
+      ? "День рождения Дмитрия"
+      : "События выбранной даты";
   }
 
   // Заполняем список событий для выбранной даты в модальном окне

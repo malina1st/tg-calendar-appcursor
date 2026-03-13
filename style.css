@@ -129,6 +129,11 @@
     font-size: 0.7rem;
   }
   
+.day-birthday {
+  color: #a855f7; /* фиолетовый текст для дня рождения Дмитрия */
+  font-weight: 700;
+}
+
   .day-cell.empty {
     opacity: 0;
   }
