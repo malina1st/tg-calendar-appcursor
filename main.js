@@ -13,6 +13,34 @@ const SUPABASE_URL = "https://goctusklfhuygbpobqts.supabase.co";
 const SUPABASE_ANON_KEY = "sb_publishable_GZ8V9A3uRlGx7s6sfvy3Vw_dPdsILiW";
 const EVENTS_ENDPOINT = `${SUPABASE_URL}/rest/v1/events`;
 
+// Разрешённые пользователи Telegram (по user.id из WebApp)
+// Сюда нужно вписать числовые ID 18 пользователей, например:
+// const ALLOWED_TELEGRAM_USER_IDS = [123456789, 987654321, ...];
+const ALLOWED_TELEGRAM_USER_IDS = [
+  231645712, // Дмитрий
+];
+
+function isTelegramUserAllowed() {
+  if (!tg) {
+    // Если не внутри Telegram (открыто в браузере) — по умолчанию разрешаем.
+    // Если нужно запретить, верните здесь false.
+    return true;
+  }
+
+  const unsafe = tg.initDataUnsafe || {};
+  const user = unsafe.user;
+  if (!user || typeof user.id !== "number") {
+    return false;
+  }
+
+  if (ALLOWED_TELEGRAM_USER_IDS.length === 0) {
+    // Список не заполнен — никого не пускаем, чтобы не оставить доступ случайно открытым.
+    return false;
+  }
+
+  return ALLOWED_TELEGRAM_USER_IDS.includes(user.id);
+}
+
 // Заголовки для Supabase: ключ sb_publishable_ передаём только в apikey, JWT (eyJ) — в apikey и Authorization
 function getSupabaseHeaders(extra = {}) {
   const key = SUPABASE_ANON_KEY;
@@ -797,6 +825,16 @@ function changeYear(delta) {
 
 // ============= ИНИЦИАЛИЗАЦИЯ =============
 document.addEventListener("DOMContentLoaded", async () => {
+  // Ограничение доступа по Telegram user.id
+  if (!isTelegramUserAllowed()) {
+    const appRoot = document.querySelector(".app");
+    if (appRoot) {
+      appRoot.innerHTML =
+        "<div style=\"padding:16px; text-align:center; font-size:0.9rem; color:#e5e7eb;\">У вас нет доступа к этому календарю.</div>";
+    }
+    return;
+  }
+
   setupForm();
 
   // Закрытие модального окна по тапу вне окна (по затемнённому фону)
