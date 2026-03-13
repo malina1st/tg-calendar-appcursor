@@ -292,9 +292,7 @@ function renderYearCalendar() {
       }
 
       if (eventsByDate[dateStr]) {
-        const dot = document.createElement("div");
-        dot.className = "dot";
-        cell.appendChild(dot);
+        cell.classList.add("day-has-event");
       }
 
       cell.addEventListener("click", () => {

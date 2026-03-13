@@ -119,16 +119,9 @@
     opacity: 0;
   }
   
-  .day-cell .dot {
-    position: absolute;
-    bottom: 1px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 4px;
-    height: 4px;
-    border-radius: 999px;
-    background: #f97316;
-  }
+.day-has-event {
+  border: 1px solid #f97316;
+}
   
   .day-today {
     border: 1px solid #22c55e;
