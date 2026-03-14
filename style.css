@@ -87,6 +87,7 @@
   }
 
   .calendar-year.calendar-year-expanded {
+    display: block;
     position: relative;
     min-height: 0;
   }
@@ -97,8 +98,7 @@
   }
 
   .month-expanded-wrap {
-    position: absolute;
-    inset: 0;
+    position: relative;
     z-index: 30;
     background: transparent;
     display: flex;
@@ -115,7 +115,7 @@
     flex-shrink: 0;
     border-color: #1d4ed8;
     box-shadow: 0 4px 10px rgba(15, 23, 42, 0.7);
-    background: #020617;
+    background: rgba(2, 6, 23, 0.75);
   }
 
   .month-card-expanded .month-title {
