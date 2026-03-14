@@ -355,7 +355,9 @@ function renderYearCalendar() {
     const backdrop = document.createElement("div");
     backdrop.id = "month-expanded-backdrop";
     backdrop.className = "month-expanded-backdrop";
-    backdrop.addEventListener("click", () => {
+    backdrop.addEventListener("click", (e) => {
+      e.preventDefault();
+      e.stopPropagation();
       state.expandedMonth = null;
       renderYearCalendar();
       renderSidePanel();
@@ -366,6 +368,8 @@ function renderYearCalendar() {
     wrap.className = "month-expanded-wrap";
     wrap.addEventListener("click", (e) => {
       if (e.target === wrap) {
+        e.preventDefault();
+        e.stopPropagation();
         state.expandedMonth = null;
         renderYearCalendar();
         renderSidePanel();
