@@ -158,6 +158,14 @@
     box-shadow: 0 4px 10px rgba(15, 23, 42, 0.7);
     border-color: #1d4ed8;
   }
+
+  /* Сразу после тапа-закрытия развёрнутого месяца не подсвечивать карточку под тапом */
+  .app.month-just-closed .month-card:hover,
+  .app.month-just-closed .month-card:active {
+    transform: none;
+    box-shadow: none;
+    border-color: #111827;
+  }
   
   .month-title {
     font-size: 0.9rem;

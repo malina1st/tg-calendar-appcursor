@@ -364,8 +364,11 @@ function renderYearCalendar() {
       e.stopPropagation();
       lastExpandCloseAt = Date.now();
       state.expandedMonth = null;
+      const app = document.querySelector(".app");
+      if (app) app.classList.add("month-just-closed");
       renderYearCalendar();
       renderSidePanel();
+      setTimeout(() => app && app.classList.remove("month-just-closed"), EXPAND_CLOSE_IGNORE_MS);
     });
     document.body.appendChild(backdrop);
 
@@ -377,8 +380,11 @@ function renderYearCalendar() {
         e.stopPropagation();
         lastExpandCloseAt = Date.now();
         state.expandedMonth = null;
+        const app = document.querySelector(".app");
+        if (app) app.classList.add("month-just-closed");
         renderYearCalendar();
         renderSidePanel();
+        setTimeout(() => app && app.classList.remove("month-just-closed"), EXPAND_CLOSE_IGNORE_MS);
       }
     });
     const card = buildMonthCard(state.expandedMonth, eventsRangeByDate, todayStr, true);
