@@ -666,15 +666,18 @@
   
   .event-item-header {
     display: grid;
-    grid-template-columns: 1fr minmax(11em, max-content);
+    grid-template-columns: 1fr minmax(13em, max-content);
     align-items: center;
-    gap: 8px;
+    gap: 10px;
     margin-bottom: 2px;
   }
   
   .event-item-title {
     font-weight: 500;
     min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
   
   .event-item-date {
