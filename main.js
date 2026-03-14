@@ -23,6 +23,12 @@ const ALLOWED_TELEGRAM_USER_IDS = [
   280705269, // Сабина
   857772788, // Михаил
   495188991, // Сергей
+  436970276, // Валентина
+  334927645, // Андрей
+  258219308, // Марина
+  501924871, // Карина
+  486645843, // Елена
+  589155439, // Екатерина
 ];
 
 function getTelegramUserId() {
@@ -573,18 +579,12 @@ function renderSidePanel() {
 
       const startDateText = formatDateHuman(startDateObj);
       const endDateText = formatDateHuman(endDateObj);
+      const startPart = e.startTime ? `${startDateText}, ${e.startTime}` : startDateText;
+      const endPart = e.endTime ? `${endDateText}, ${e.endTime}` : endDateText;
 
-      let text = "";
-      if (sameDay) {
-        text = startDateText;
-      } else {
-        text = `с ${startDateText} до ${endDateText}`;
-      }
-
-      if (e.startTime || e.endTime) {
-        const timePart = `${e.startTime || ""}${e.endTime ? `–${e.endTime}` : ""}`;
-        text = sameDay ? `${startDateText}, ${timePart}` : `${text}, ${timePart}`;
-      }
+      const text = sameDay && startPart === endPart
+        ? startPart
+        : `с ${startPart} до ${endPart}`;
 
       dateLabel.textContent = text;
 
@@ -960,18 +960,12 @@ function openEventModal() {
 
         const startDateText = formatDateHuman(startDateObj);
         const endDateText = formatDateHuman(endDateObj);
+        const startPart = e.startTime ? `${startDateText}, ${e.startTime}` : startDateText;
+        const endPart = e.endTime ? `${endDateText}, ${e.endTime}` : endDateText;
 
-        let text = "";
-        if (sameDay) {
-          text = startDateText;
-        } else {
-          text = `с ${startDateText} до ${endDateText}`;
-        }
-
-        if (e.startTime || e.endTime) {
-          const timePart = `${e.startTime || ""}${e.endTime ? `–${e.endTime}` : ""}`;
-          text = sameDay ? `${startDateText}, ${timePart}` : `${text}, ${timePart}`;
-        }
+        const text = sameDay && startPart === endPart
+          ? startPart
+          : `с ${startPart} до ${endPart}`;
 
         dateLabelEl.textContent = text;
         li.appendChild(dateLabelEl);
