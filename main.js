@@ -104,6 +104,15 @@ function formatDate(date) {
   return `${year}-${month}-${day}`; // YYYY-MM-DD
 }
 
+/** Парсит строку YYYY-MM-DD как дату в локальном часовом поясе (полночь у пользователя). Иначе при new Date("YYYY-MM-DD") получается UTC-полночь и в США показывается предыдущий день. */
+function parseDateLocal(dateStr) {
+  if (!dateStr || typeof dateStr !== "string") return new Date(NaN);
+  const parts = dateStr.split("-").map(Number);
+  if (parts.length !== 3) return new Date(NaN);
+  const [y, m, d] = parts;
+  return new Date(y, m - 1, d);
+}
+
 function formatDateHuman(date) {
   return date.toLocaleDateString("ru-RU", {
     day: "2-digit",
@@ -130,8 +139,8 @@ function getUpcomingEvents(events, limit = 10) {
 
 function buildDatesRange(startDateStr, endDateStr) {
   const dates = [];
-  const start = new Date(startDateStr);
-  const end = new Date(endDateStr);
+  const start = parseDateLocal(startDateStr);
+  const end = parseDateLocal(endDateStr);
   if (Number.isNaN(start.getTime()) || Number.isNaN(end.getTime())) {
     return [startDateStr];
   }
@@ -559,8 +568,8 @@ function renderSidePanel() {
       const endDate = e.endDate || startDate;
       const sameDay = startDate === endDate;
 
-      const startDateObj = new Date(startDate);
-      const endDateObj = new Date(endDate);
+      const startDateObj = parseDateLocal(startDate);
+      const endDateObj = parseDateLocal(endDate);
 
       const startDateText = formatDateHuman(startDateObj);
       const endDateText = formatDateHuman(endDateObj);
@@ -821,7 +830,7 @@ function openEventModal() {
 
   if (!modal || !state.selectedDate) return;
 
-  const dateObj = new Date(state.selectedDate);
+  const dateObj = parseDateLocal(state.selectedDate);
   if (dateLabel) {
     dateLabel.textContent = formatDateHuman(dateObj);
   }
@@ -946,8 +955,8 @@ function openEventModal() {
         const endDate = e.endDate || startDate;
         const sameDay = startDate === endDate;
 
-        const startDateObj = new Date(startDate);
-        const endDateObj = new Date(endDate);
+        const startDateObj = parseDateLocal(startDate);
+        const endDateObj = parseDateLocal(endDate);
 
         const startDateText = formatDateHuman(startDateObj);
         const endDateText = formatDateHuman(endDateObj);
