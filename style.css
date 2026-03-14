@@ -678,6 +678,7 @@
   .event-item-date {
     font-size: 0.7rem;
     color: #9ca3af;
+    white-space: pre-line;
   }
 
 .event-item-actions {

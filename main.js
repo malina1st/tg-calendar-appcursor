@@ -579,12 +579,12 @@ function renderSidePanel() {
 
       const startDateText = formatDateHuman(startDateObj);
       const endDateText = formatDateHuman(endDateObj);
-      const startPart = e.startTime ? `${startDateText}, ${e.startTime}` : startDateText;
-      const endPart = e.endTime ? `${endDateText}, ${e.endTime}` : endDateText;
+      const startPart = e.startTime ? `${startDateText} ${e.startTime}` : startDateText;
+      const endPart = e.endTime ? `${endDateText} ${e.endTime}` : endDateText;
 
       const text = sameDay && startPart === endPart
         ? startPart
-        : `с ${startPart} до ${endPart}`;
+        : `${startPart}\nдо ${endPart}`;
 
       dateLabel.textContent = text;
 
@@ -960,12 +960,12 @@ function openEventModal() {
 
         const startDateText = formatDateHuman(startDateObj);
         const endDateText = formatDateHuman(endDateObj);
-        const startPart = e.startTime ? `${startDateText}, ${e.startTime}` : startDateText;
-        const endPart = e.endTime ? `${endDateText}, ${e.endTime}` : endDateText;
+        const startPart = e.startTime ? `${startDateText} ${e.startTime}` : startDateText;
+        const endPart = e.endTime ? `${endDateText} ${e.endTime}` : endDateText;
 
         const text = sameDay && startPart === endPart
           ? startPart
-          : `с ${startPart} до ${endPart}`;
+          : `${startPart}\nдо ${endPart}`;
 
         dateLabelEl.textContent = text;
         li.appendChild(dateLabelEl);
