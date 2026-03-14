@@ -100,7 +100,7 @@
   .month-expanded-wrap {
     position: relative;
     z-index: 30;
-    background: rgba(15, 23, 42, 0.9);
+    background: transparent;
     display: flex;
     align-items: center;
     justify-content: center;
