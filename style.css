@@ -665,20 +665,24 @@
   }
   
   .event-item-header {
-    display: flex;
-    justify-content: space-between;
+    display: grid;
+    grid-template-columns: 1fr minmax(11em, max-content);
     align-items: center;
+    gap: 8px;
     margin-bottom: 2px;
   }
   
   .event-item-title {
     font-weight: 500;
+    min-width: 0;
   }
   
   .event-item-date {
     font-size: 0.7rem;
     color: #9ca3af;
     white-space: pre-line;
+    min-width: 0;
+    justify-self: start;
   }
 
 .event-item-actions {
