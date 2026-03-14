@@ -265,10 +265,6 @@ const state = {
   events: loadEvents(), // [{ id, startDate, endDate, dates:[YYYY-MM-DD], title, note, startTime, endTime }]
 };
 
-// После тапа-выхода из развёрнутого месяца игнорируем следующий клик по карточке месяца (чтобы не подсвечивался/не открывался месяц)
-let lastExpandCloseAt = 0;
-const EXPAND_CLOSE_IGNORE_MS = 400;
-
 // ============= РЕНДЕР КАЛЕНДАРЯ ГОДА =============
 const MONTH_NAMES = [
   "Январь",
@@ -362,13 +358,18 @@ function renderYearCalendar() {
     backdrop.addEventListener("click", (e) => {
       e.preventDefault();
       e.stopPropagation();
-      lastExpandCloseAt = Date.now();
       state.expandedMonth = null;
       const app = document.querySelector(".app");
       if (app) app.classList.add("month-just-closed");
+      const clearJustClosed = () => {
+        app && app.classList.remove("month-just-closed");
+        document.removeEventListener("click", clearJustClosed);
+        document.removeEventListener("touchstart", clearJustClosed, { capture: true });
+      };
+      document.addEventListener("click", clearJustClosed, { once: true });
+      document.addEventListener("touchstart", clearJustClosed, { once: true, capture: true });
       renderYearCalendar();
       renderSidePanel();
-      setTimeout(() => app && app.classList.remove("month-just-closed"), EXPAND_CLOSE_IGNORE_MS);
     });
     document.body.appendChild(backdrop);
 
@@ -378,13 +379,18 @@ function renderYearCalendar() {
       if (e.target === wrap) {
         e.preventDefault();
         e.stopPropagation();
-        lastExpandCloseAt = Date.now();
         state.expandedMonth = null;
         const app = document.querySelector(".app");
         if (app) app.classList.add("month-just-closed");
+        const clearJustClosed = () => {
+          app && app.classList.remove("month-just-closed");
+          document.removeEventListener("click", clearJustClosed);
+          document.removeEventListener("touchstart", clearJustClosed, { capture: true });
+        };
+        document.addEventListener("click", clearJustClosed, { once: true });
+        document.addEventListener("touchstart", clearJustClosed, { once: true, capture: true });
         renderYearCalendar();
         renderSidePanel();
-        setTimeout(() => app && app.classList.remove("month-just-closed"), EXPAND_CLOSE_IGNORE_MS);
       }
     });
     const card = buildMonthCard(state.expandedMonth, eventsRangeByDate, todayStr, true);
@@ -405,7 +411,6 @@ function renderYearCalendar() {
     const card = buildMonthCard(month, eventsRangeByDate, todayStr, false);
     card.addEventListener("click", (e) => {
       if (e.target.closest(".day-cell")) return;
-      if (lastExpandCloseAt && Date.now() - lastExpandCloseAt < EXPAND_CLOSE_IGNORE_MS) return;
       state.expandedMonth = month;
       renderYearCalendar();
       renderSidePanel();
