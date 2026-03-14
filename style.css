@@ -115,6 +115,7 @@
     flex-shrink: 0;
     border-color: #1d4ed8;
     box-shadow: 0 4px 10px rgba(15, 23, 42, 0.7);
+    background: rgba(2, 6, 23, 0.75);
   }
 
   .month-card-expanded .month-title {
