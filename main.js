@@ -29,6 +29,7 @@ const ALLOWED_TELEGRAM_USER_IDS = [
   501924871, // Карина
   486645843, // Елена
   589155439, // Екатерина
+  455201136, // Костя
 ];
 
 function getTelegramUserId() {
