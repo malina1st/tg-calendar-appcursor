@@ -352,6 +352,18 @@ function renderYearCalendar() {
   if (existingBackdrop) existingBackdrop.remove();
 
   if (state.expandedMonth !== null) {
+    // Сетка года остаётся под оверлеем, чтобы фон был прозрачным и календарь виден
+    for (let month = 0; month < 12; month++) {
+      const yearCard = buildMonthCard(month, eventsRangeByDate, todayStr, false);
+      yearCard.addEventListener("click", (e) => {
+        if (e.target.closest(".day-cell")) return;
+        state.expandedMonth = month;
+        renderYearCalendar();
+        renderSidePanel();
+      });
+      container.appendChild(yearCard);
+    }
+
     const backdrop = document.createElement("div");
     backdrop.id = "month-expanded-backdrop";
     backdrop.className = "month-expanded-backdrop";
