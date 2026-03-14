@@ -113,6 +113,8 @@
     max-width: 480px;
     padding: 12px;
     flex-shrink: 0;
+    border-color: #1d4ed8;
+    box-shadow: 0 4px 10px rgba(15, 23, 42, 0.7);
   }
 
   .month-card-expanded .month-title {
