@@ -643,11 +643,8 @@ function renderSidePanel() {
         actions.appendChild(editBtn);
         actions.appendChild(deleteBtn);
         header.appendChild(actions);
-      } else {
-        header.appendChild(dateLabel);
       }
       li.appendChild(header);
-      if (isExpandedMonth) li.appendChild(dateLabel);
 
       if (e.note) {
         const note = document.createElement("div");
@@ -655,6 +652,8 @@ function renderSidePanel() {
         note.textContent = e.note;
         li.appendChild(note);
       }
+
+      li.appendChild(dateLabel);
 
       if (e.location) {
         const loc = document.createElement("a");
