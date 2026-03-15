@@ -371,6 +371,18 @@ function renderYearCalendar() {
   if (existingBackdrop) existingBackdrop.remove();
 
   if (state.expandedMonth !== null) {
+    // Сетка года под оверлеем — как в модалке «События выбранной даты», виден общий календарь
+    for (let month = 0; month < 12; month++) {
+      const yearCard = buildMonthCard(month, eventsRangeByDate, todayStr, false);
+      yearCard.addEventListener("click", (e) => {
+        if (e.target.closest(".day-cell")) return;
+        state.expandedMonth = month;
+        renderYearCalendar();
+        renderSidePanel();
+      });
+      container.appendChild(yearCard);
+    }
+
     const backdrop = document.createElement("div");
     backdrop.id = "month-expanded-backdrop";
     backdrop.className = "month-expanded-backdrop";
@@ -416,7 +428,7 @@ function renderYearCalendar() {
     card.classList.add("month-card-expanded");
     card.addEventListener("click", (e) => e.stopPropagation());
     wrap.appendChild(card);
-    container.appendChild(wrap);
+    document.body.appendChild(wrap);
     container.classList.add("calendar-year-expanded");
     if (appMain) appMain.classList.add("month-expanded");
     if (appEl) appEl.classList.add("month-expanded");

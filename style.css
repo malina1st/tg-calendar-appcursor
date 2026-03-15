@@ -67,9 +67,7 @@
     position: fixed;
     inset: 0;
     z-index: 25;
-    background: transparent;
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
+    background: rgba(15, 23, 42, 0.85);
     user-select: none;
     -webkit-tap-highlight-color: transparent;
   }
@@ -89,7 +87,6 @@
   }
 
   .calendar-year.calendar-year-expanded {
-    display: block;
     position: relative;
     min-height: 0;
   }
@@ -100,7 +97,8 @@
   }
 
   .month-expanded-wrap {
-    position: relative;
+    position: fixed;
+    inset: 0;
     z-index: 30;
     background: transparent;
     display: flex;
