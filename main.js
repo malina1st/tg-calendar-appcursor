@@ -328,7 +328,7 @@ function renderYearCalendar() {
   const container = document.getElementById("calendar-year");
   const yearLabel = document.getElementById("current-year");
   container.innerHTML = "";
-  yearLabel.innerHTML = `Год: <span class="current-year-number">${state.year}</span>`;
+  yearLabel.innerHTML = `<span class="current-year-number">${state.year}</span>`;
 
   // Карта "дата -> информация о диапазоне события"
   const eventsRangeByDate = {};
