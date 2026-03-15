@@ -667,6 +667,11 @@
     background: #020617;
     color: #e5e7eb;
   }
+
+  /* Не менее 16px — иначе на iOS при фокусе срабатывает зум */
+  #event-note {
+    font-size: 16px;
+  }
   
 #event-title:focus,
 #event-note:focus,
