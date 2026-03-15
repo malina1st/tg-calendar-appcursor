@@ -669,7 +669,9 @@
   }
 
   /* Не менее 16px — иначе на iOS при фокусе срабатывает зум */
-  #event-note {
+  #event-title,
+  #event-note,
+  #event-location {
     font-size: 16px;
   }
   
