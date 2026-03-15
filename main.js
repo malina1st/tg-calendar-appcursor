@@ -408,14 +408,42 @@ function renderYearCalendar() {
       e.stopPropagation();
       closeExpandedMonth();
     });
-    backdrop.addEventListener("touchstart", (e) => {
-      if (e.target.closest(".month-card-expanded") || e.target.closest(".event-panel")) return;
-      e.preventDefault();
-      closeExpandedMonth();
-    }, { passive: false });
-
     const wrap = document.createElement("div");
     wrap.className = "month-expanded-wrap";
+
+    let touchStartX = 0;
+    const SWIPE_MIN_PX = 50;
+    wrap.addEventListener("touchstart", (e) => {
+      if (e.changedTouches && e.changedTouches[0]) touchStartX = e.changedTouches[0].clientX;
+    }, { passive: true });
+    wrap.addEventListener("touchend", (e) => {
+      if (!e.changedTouches || !e.changedTouches[0]) return;
+      const touchEndX = e.changedTouches[0].clientX;
+      const delta = touchEndX - touchStartX;
+      if (Math.abs(delta) < SWIPE_MIN_PX) return;
+      let newMonth = state.expandedMonth;
+      let newYear = state.year;
+      if (delta < 0) {
+        if (state.expandedMonth < 11) {
+          newMonth = state.expandedMonth + 1;
+        } else {
+          newMonth = 0;
+          newYear = state.year + 1;
+        }
+      } else {
+        if (state.expandedMonth > 0) {
+          newMonth = state.expandedMonth - 1;
+        } else {
+          newMonth = 11;
+          newYear = state.year - 1;
+        }
+      }
+      state.expandedMonth = newMonth;
+      state.year = newYear;
+      renderYearCalendar();
+      renderSidePanel();
+    }, { passive: true });
+
     const card = buildMonthCard(state.expandedMonth, eventsRangeByDate, todayStr, true);
     card.classList.add("month-card-expanded");
     card.addEventListener("click", (e) => e.stopPropagation());
