@@ -368,6 +368,7 @@ function renderYearCalendar() {
   const appEl = document.querySelector(".app");
   const appMain = document.querySelector(".app-main");
   const existingBackdrop = document.getElementById("month-expanded-backdrop");
+  const eventPanelInBackdrop = existingBackdrop ? existingBackdrop.querySelector(".event-panel") : null;
   if (existingBackdrop) existingBackdrop.remove();
 
   if (state.expandedMonth !== null) {
@@ -431,8 +432,7 @@ function renderYearCalendar() {
   container.classList.remove("calendar-year-expanded");
   if (appMain) appMain.classList.remove("month-expanded");
   if (appEl) appEl.classList.remove("month-expanded");
-  const eventPanel = document.querySelector(".event-panel");
-  if (eventPanel && eventPanel.parentElement !== appMain && appMain) appMain.appendChild(eventPanel);
+  if (eventPanelInBackdrop && appMain) appMain.appendChild(eventPanelInBackdrop);
 
   for (let month = 0; month < 12; month++) {
     const card = buildMonthCard(month, eventsRangeByDate, todayStr, false);
