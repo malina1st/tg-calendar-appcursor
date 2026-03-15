@@ -113,7 +113,7 @@
   .month-expanded-wrap .event-panel {
     width: 100%;
     max-width: 480px;
-    flex-shrink: 0;
+    flex: 0 0 auto;
     margin-top: 12px;
   }
 
