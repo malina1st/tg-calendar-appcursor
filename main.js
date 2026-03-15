@@ -406,23 +406,25 @@ function renderYearCalendar() {
 
     const wrap = document.createElement("div");
     wrap.className = "month-expanded-wrap";
+    const closeExpandedMonth = () => {
+      state.expandedMonth = null;
+      const app = document.querySelector(".app");
+      if (app) app.classList.add("month-just-closed");
+      const clearJustClosed = () => {
+        app && app.classList.remove("month-just-closed");
+        document.removeEventListener("click", clearJustClosed);
+        document.removeEventListener("touchstart", clearJustClosed, { capture: true });
+      };
+      document.addEventListener("click", clearJustClosed, { once: true });
+      document.addEventListener("touchstart", clearJustClosed, { once: true, capture: true });
+      renderYearCalendar();
+      renderSidePanel();
+    };
     wrap.addEventListener("click", (e) => {
-      if (e.target === wrap) {
-        e.preventDefault();
-        e.stopPropagation();
-        state.expandedMonth = null;
-        const app = document.querySelector(".app");
-        if (app) app.classList.add("month-just-closed");
-        const clearJustClosed = () => {
-          app && app.classList.remove("month-just-closed");
-          document.removeEventListener("click", clearJustClosed);
-          document.removeEventListener("touchstart", clearJustClosed, { capture: true });
-        };
-        document.addEventListener("click", clearJustClosed, { once: true });
-        document.addEventListener("touchstart", clearJustClosed, { once: true, capture: true });
-        renderYearCalendar();
-        renderSidePanel();
-      }
+      if (e.target.closest(".month-card-expanded") || e.target.closest(".event-panel")) return;
+      e.preventDefault();
+      e.stopPropagation();
+      closeExpandedMonth();
     });
     const card = buildMonthCard(state.expandedMonth, eventsRangeByDate, todayStr, true);
     card.classList.add("month-card-expanded");
