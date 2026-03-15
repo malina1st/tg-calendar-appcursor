@@ -448,7 +448,7 @@ function renderYearCalendar() {
       });
     }
     wrap.appendChild(card);
-    const eventPanel = document.querySelector(".event-panel");
+    const eventPanel = eventPanelInBackdrop || document.querySelector(".event-panel");
     if (eventPanel) wrap.appendChild(eventPanel);
     backdrop.appendChild(wrap);
     document.body.appendChild(backdrop);
