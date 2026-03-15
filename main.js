@@ -428,6 +428,8 @@ function renderYearCalendar() {
     card.classList.add("month-card-expanded");
     card.addEventListener("click", (e) => e.stopPropagation());
     wrap.appendChild(card);
+    const eventPanel = document.querySelector(".event-panel");
+    if (eventPanel) wrap.appendChild(eventPanel);
     document.body.appendChild(wrap);
     container.classList.add("calendar-year-expanded");
     if (appMain) appMain.classList.add("month-expanded");
@@ -437,6 +439,8 @@ function renderYearCalendar() {
   container.classList.remove("calendar-year-expanded");
   if (appMain) appMain.classList.remove("month-expanded");
   if (appEl) appEl.classList.remove("month-expanded");
+  const eventPanel = document.querySelector(".event-panel");
+  if (eventPanel && eventPanel.parentElement !== appMain && appMain) appMain.appendChild(eventPanel);
 
   for (let month = 0; month < 12; month++) {
     const card = buildMonthCard(month, eventsRangeByDate, todayStr, false);

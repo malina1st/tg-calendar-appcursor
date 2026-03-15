@@ -102,10 +102,19 @@
     z-index: 30;
     background: transparent;
     display: flex;
-    align-items: flex-start;
-    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
     padding: 80px 16px 16px 16px;
     box-sizing: border-box;
+    overflow-y: auto;
+  }
+
+  .month-expanded-wrap .event-panel {
+    width: 100%;
+    max-width: 480px;
+    flex-shrink: 0;
+    margin-top: 12px;
   }
 
   .month-card-expanded {
