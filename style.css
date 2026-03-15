@@ -235,6 +235,12 @@
   z-index: 2;
 }
 
+/* День рождения в субботу или воскресенье — оставляем фиолетовый */
+.days-grid .day-cell.day-birthday:nth-child(7n + 6),
+.days-grid .day-cell.day-birthday:nth-child(7n + 7) {
+  color: #a855f7;
+}
+
   .day-cell.empty {
     opacity: 0;
   }
