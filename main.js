@@ -383,29 +383,6 @@ function renderYearCalendar() {
       container.appendChild(yearCard);
     }
 
-    const backdrop = document.createElement("div");
-    backdrop.id = "month-expanded-backdrop";
-    backdrop.className = "month-expanded-backdrop";
-    backdrop.addEventListener("click", (e) => {
-      e.preventDefault();
-      e.stopPropagation();
-      state.expandedMonth = null;
-      const app = document.querySelector(".app");
-      if (app) app.classList.add("month-just-closed");
-      const clearJustClosed = () => {
-        app && app.classList.remove("month-just-closed");
-        document.removeEventListener("click", clearJustClosed);
-        document.removeEventListener("touchstart", clearJustClosed, { capture: true });
-      };
-      document.addEventListener("click", clearJustClosed, { once: true });
-      document.addEventListener("touchstart", clearJustClosed, { once: true, capture: true });
-      renderYearCalendar();
-      renderSidePanel();
-    });
-    document.body.appendChild(backdrop);
-
-    const wrap = document.createElement("div");
-    wrap.className = "month-expanded-wrap";
     const closeExpandedMonth = () => {
       state.expandedMonth = null;
       const app = document.querySelector(".app");
@@ -420,19 +397,32 @@ function renderYearCalendar() {
       renderYearCalendar();
       renderSidePanel();
     };
-    wrap.addEventListener("click", (e) => {
+
+    const backdrop = document.createElement("div");
+    backdrop.id = "month-expanded-backdrop";
+    backdrop.className = "month-expanded-backdrop";
+    backdrop.addEventListener("click", (e) => {
       if (e.target.closest(".month-card-expanded") || e.target.closest(".event-panel")) return;
       e.preventDefault();
       e.stopPropagation();
       closeExpandedMonth();
     });
+    backdrop.addEventListener("touchstart", (e) => {
+      if (e.target.closest(".month-card-expanded") || e.target.closest(".event-panel")) return;
+      e.preventDefault();
+      closeExpandedMonth();
+    }, { passive: false });
+
+    const wrap = document.createElement("div");
+    wrap.className = "month-expanded-wrap";
     const card = buildMonthCard(state.expandedMonth, eventsRangeByDate, todayStr, true);
     card.classList.add("month-card-expanded");
     card.addEventListener("click", (e) => e.stopPropagation());
     wrap.appendChild(card);
     const eventPanel = document.querySelector(".event-panel");
     if (eventPanel) wrap.appendChild(eventPanel);
-    document.body.appendChild(wrap);
+    backdrop.appendChild(wrap);
+    document.body.appendChild(backdrop);
     container.classList.add("calendar-year-expanded");
     if (appMain) appMain.classList.add("month-expanded");
     if (appEl) appEl.classList.add("month-expanded");
