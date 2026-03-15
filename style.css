@@ -130,8 +130,46 @@
   .month-card-expanded .month-title {
     font-size: 1.2rem;
     margin-bottom: 8px;
-    justify-content: center;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .month-card-expanded .month-title .month-title-text {
+    flex: 1;
     text-align: center;
+  }
+
+  .month-expanded-nav {
+    flex-shrink: 0;
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    border: 1px solid #374151;
+    border-radius: 50%;
+    background: #111827;
+    color: #e5e7eb;
+    font-size: 1.5rem;
+    line-height: 1;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .month-expanded-nav:hover {
+    background: #1d4ed8;
+    border-color: #1d4ed8;
+  }
+
+  .month-expanded-prev {
+    order: -1;
+  }
+
+  .month-expanded-next {
+    order: 1;
   }
 
   .month-card-expanded .weekdays,

@@ -419,6 +419,34 @@ function renderYearCalendar() {
     const card = buildMonthCard(state.expandedMonth, eventsRangeByDate, todayStr, true);
     card.classList.add("month-card-expanded");
     card.addEventListener("click", (e) => e.stopPropagation());
+    const btnPrev = card.querySelector(".month-expanded-prev");
+    const btnNext = card.querySelector(".month-expanded-next");
+    if (btnPrev) {
+      btnPrev.addEventListener("click", (e) => {
+        e.stopPropagation();
+        if (state.expandedMonth > 0) {
+          state.expandedMonth -= 1;
+        } else {
+          state.expandedMonth = 11;
+          state.year -= 1;
+        }
+        renderYearCalendar();
+        renderSidePanel();
+      });
+    }
+    if (btnNext) {
+      btnNext.addEventListener("click", (e) => {
+        e.stopPropagation();
+        if (state.expandedMonth < 11) {
+          state.expandedMonth += 1;
+        } else {
+          state.expandedMonth = 0;
+          state.year += 1;
+        }
+        renderYearCalendar();
+        renderSidePanel();
+      });
+    }
     wrap.appendChild(card);
     const eventPanel = document.querySelector(".event-panel");
     if (eventPanel) wrap.appendChild(eventPanel);
@@ -452,9 +480,28 @@ function buildMonthCard(month, eventsRangeByDate, todayStr, isExpanded) {
 
   const title = document.createElement("div");
   title.className = "month-title";
-  const titleText = document.createElement("span");
-  titleText.textContent = MONTH_NAMES[month];
-  title.appendChild(titleText);
+  if (isExpanded) {
+    const btnPrev = document.createElement("button");
+    btnPrev.type = "button";
+    btnPrev.className = "month-expanded-nav month-expanded-prev";
+    btnPrev.setAttribute("aria-label", "Предыдущий месяц");
+    btnPrev.textContent = "‹";
+    const titleText = document.createElement("span");
+    titleText.className = "month-title-text";
+    titleText.textContent = MONTH_NAMES[month];
+    const btnNext = document.createElement("button");
+    btnNext.type = "button";
+    btnNext.className = "month-expanded-nav month-expanded-next";
+    btnNext.setAttribute("aria-label", "Следующий месяц");
+    btnNext.textContent = "›";
+    title.appendChild(btnPrev);
+    title.appendChild(titleText);
+    title.appendChild(btnNext);
+  } else {
+    const titleText = document.createElement("span");
+    titleText.textContent = MONTH_NAMES[month];
+    title.appendChild(titleText);
+  }
   card.appendChild(title);
 
   const weekdaysRow = document.createElement("div");
