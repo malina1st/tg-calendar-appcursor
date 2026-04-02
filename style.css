@@ -308,7 +308,7 @@
   color: #e5e7eb;
 }
 
-/* Диапазоны событий (несколько дней подряд) */
+/* Диапазоны событий (несколько дней подряд) — только оранжевый */
 .day-range-single {
   border: 1px solid #f97316;
   border-radius: 999px;
@@ -346,6 +346,20 @@
   margin-left: -1px;
   position: relative;
   z-index: 1;
+}
+
+/* Только сегодня + событие: двухцветная обводка (зелёный «сегодня», оранжевый и синий кольца) */
+.day-cell.day-today.day-range-single {
+  border: 1px solid #22c55e;
+  border-radius: 999px;
+  box-shadow: 0 0 0 2px #f97316, 0 0 0 4px #3b82f6;
+}
+
+.day-cell.day-today.day-range-start,
+.day-cell.day-today.day-range-middle,
+.day-cell.day-today.day-range-end {
+  border-color: #22c55e;
+  box-shadow: 0 0 0 2px #f97316, 0 0 0 4px #3b82f6;
 }
 
 .event-panel {
