@@ -127,10 +127,34 @@ function parseDateLocal(dateStr) {
 
 function formatDateHuman(date) {
   return date.toLocaleDateString("ru-RU", {
-    day: "2-digit",
+    day: "numeric",
     month: "long",
     year: "numeric",
   });
+}
+
+/** Подпись даты/времени: для одного дня показываем 12:00-13:00 без даты окончания */
+function formatEventDateLabel(e) {
+  const startDate = e.startDate || (e.dates && e.dates[0]);
+  const endDate = e.endDate || startDate;
+  if (!startDate) return "";
+
+  const sameDay = startDate === endDate;
+  const startDateText = formatDateHuman(parseDateLocal(startDate)).replace(" г.", "г.");
+  const endDateText = formatDateHuman(parseDateLocal(endDate)).replace(" г.", "г.");
+  const startTime = (e.startTime || "").trim();
+  const endTime = (e.endTime || "").trim();
+
+  if (sameDay) {
+    if (startTime && endTime) return `${startDateText} ${startTime}-${endTime}`;
+    if (startTime) return `${startDateText} ${startTime}`;
+    if (endTime) return `${startDateText} ${endTime}`;
+    return startDateText;
+  }
+
+  const startPart = startTime ? `${startDateText} ${startTime}` : startDateText;
+  const endPart = endTime ? `${endDateText} ${endTime}` : endDateText;
+  return `${startPart}\nдо ${endPart}`;
 }
 
 /** Дата и время конца: на час позже начала (локальное время, с переходом на следующий день при необходимости) */
@@ -701,24 +725,10 @@ function renderSidePanel() {
 
       const dateLabel = document.createElement("div");
       dateLabel.className = "event-item-date";
-
       const startDate = e.startDate || (e.dates && e.dates[0]);
       const endDate = e.endDate || startDate;
-      const sameDay = startDate === endDate;
 
-      const startDateObj = parseDateLocal(startDate);
-      const endDateObj = parseDateLocal(endDate);
-
-      const startDateText = formatDateHuman(startDateObj);
-      const endDateText = formatDateHuman(endDateObj);
-      const startPart = e.startTime ? `${startDateText} ${e.startTime}` : startDateText;
-      const endPart = e.endTime ? `${endDateText} ${e.endTime}` : endDateText;
-
-      const text = sameDay && startPart === endPart
-        ? startPart
-        : `${startPart}\nдо ${endPart}`;
-
-      dateLabel.textContent = text;
+      dateLabel.textContent = formatEventDateLabel(e);
 
       header.appendChild(title);
       if (isExpandedMonth) {
@@ -1107,23 +1117,7 @@ function openEventModal() {
         const dateLabelEl = document.createElement("div");
         dateLabelEl.className = "event-item-date";
 
-        const startDate = e.startDate || (e.dates && e.dates[0]);
-        const endDate = e.endDate || startDate;
-        const sameDay = startDate === endDate;
-
-        const startDateObj = parseDateLocal(startDate);
-        const endDateObj = parseDateLocal(endDate);
-
-        const startDateText = formatDateHuman(startDateObj);
-        const endDateText = formatDateHuman(endDateObj);
-        const startPart = e.startTime ? `${startDateText} ${e.startTime}` : startDateText;
-        const endPart = e.endTime ? `${endDateText} ${e.endTime}` : endDateText;
-
-        const text = sameDay && startPart === endPart
-          ? startPart
-          : `${startPart}\nдо ${endPart}`;
-
-        dateLabelEl.textContent = text;
+        dateLabelEl.textContent = formatEventDateLabel(e);
         li.appendChild(dateLabelEl);
 
         if (e.note) {
