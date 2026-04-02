@@ -211,6 +211,17 @@
     border-color: #1d4ed8;
   }
 
+  .month-card-past {
+    filter: grayscale(100%);
+    opacity: 0.7;
+  }
+
+  .month-card-past:hover {
+    transform: none;
+    box-shadow: none;
+    border-color: #111827;
+  }
+
   /* После тапа-закрытия развёрнутого месяца не подсвечивать карточку под тапом (снимается при следующем клике/тапе) */
   .app.month-just-closed .month-card:hover,
   .app.month-just-closed .month-card:active {

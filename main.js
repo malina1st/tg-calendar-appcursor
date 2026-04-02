@@ -383,6 +383,16 @@ function isEventPast(e) {
   return end.getTime() < Date.now();
 }
 
+/** Календарный месяц целиком уже прошёл (раньше текущего месяца по локальной дате) */
+function isMonthBeforeCurrent(monthIndex, year) {
+  const now = new Date();
+  const cy = now.getFullYear();
+  const cm = now.getMonth();
+  if (year < cy) return true;
+  if (year > cy) return false;
+  return monthIndex < cm;
+}
+
 function renderYearCalendar() {
   const container = document.getElementById("calendar-year");
   const yearLabel = document.getElementById("current-year");
@@ -540,6 +550,7 @@ function renderYearCalendar() {
 function buildMonthCard(month, eventsRangeByDate, todayStr, isExpanded) {
   const card = document.createElement("div");
   card.className = "month-card";
+  if (isMonthBeforeCurrent(month, state.year)) card.classList.add("month-card-past");
 
   const title = document.createElement("div");
   title.className = "month-title";
