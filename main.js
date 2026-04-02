@@ -226,6 +226,22 @@ function addDays(dateStr, days) {
   return formatDate(d);
 }
 
+function parseTimeToMinutes(timeStr) {
+  const m = (timeStr || "").trim().match(/^(\d{1,2}):(\d{2})$/);
+  if (!m) return null;
+  const h = Number(m[1]);
+  const min = Number(m[2]);
+  if (!Number.isInteger(h) || !Number.isInteger(min) || h < 0 || h > 23 || min < 0 || min > 59) return null;
+  return h * 60 + min;
+}
+
+function isOvernightRange(startTimeStr, endTimeStr) {
+  const startMin = parseTimeToMinutes(startTimeStr);
+  const endMin = parseTimeToMinutes(endTimeStr);
+  if (startMin === null || endMin === null) return false;
+  return endMin <= startMin;
+}
+
 // Загрузить все события с сервера Supabase. При ошибке возвращает null (не перезаписывать локальные данные).
 async function fetchEventsFromServer() {
   try {
@@ -851,7 +867,7 @@ function setupForm() {
     if (!title || !startDate) return;
 
     let endDate = endDateRaw || startDate;
-    if (endTime === "01:00" && endDate === startDate) {
+    if (isOvernightRange(startTime, endTime) && endDate === startDate) {
       endDate = addDays(startDate, 1);
       if (endDateInput) endDateInput.value = endDate;
     }
@@ -977,24 +993,29 @@ function setupForm() {
     endTimeInput.value = next.endTime;
   };
 
-  const syncEndDateFromEndTime = () => {
-    if (!form || form.dataset.mode === "edit") return;
+  const syncEndDateFromTimes = () => {
+    if (!form) return;
     const sd = (startDateInput?.value || "").trim() || state.selectedDate;
+    const st = (startTimeInput?.value || "").trim();
     const et = (endTimeInput?.value || "").trim();
-    if (!sd || !endDateInput || et !== "01:00") return;
+    if (!sd || !endDateInput || !st || !et) return;
+    if (!isOvernightRange(st, et)) return;
     endDateInput.value = addDays(sd, 1);
   };
 
   if (startTimeInput) {
     startTimeInput.addEventListener("change", syncEndFromStart);
     startTimeInput.addEventListener("input", syncEndFromStart);
+    startTimeInput.addEventListener("change", syncEndDateFromTimes);
+    startTimeInput.addEventListener("input", syncEndDateFromTimes);
   }
   if (startDateInput) {
     startDateInput.addEventListener("change", syncEndFromStart);
+    startDateInput.addEventListener("change", syncEndDateFromTimes);
   }
   if (endTimeInput) {
-    endTimeInput.addEventListener("change", syncEndDateFromEndTime);
-    endTimeInput.addEventListener("input", syncEndDateFromEndTime);
+    endTimeInput.addEventListener("change", syncEndDateFromTimes);
+    endTimeInput.addEventListener("input", syncEndDateFromTimes);
   }
 }
 
