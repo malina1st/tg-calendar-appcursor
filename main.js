@@ -133,6 +133,17 @@ function formatDateHuman(date) {
   });
 }
 
+/** Склонение возраста: 1/21/31/41/51… год, 2–4/22–24/32–34… года, 11–14 лет, иначе лет */
+function birthdayYearsWord(age) {
+  const n = Math.abs(age);
+  const mod10 = n % 10;
+  const mod100 = n % 100;
+  if (mod100 >= 11 && mod100 <= 14) return "лет";
+  if (mod10 === 1) return "год";
+  if (mod10 >= 2 && mod10 <= 4) return "года";
+  return "лет";
+}
+
 function getUpcomingEvents(events, limit = 10) {
   const todayStr = formatDate(new Date());
 
@@ -909,7 +920,8 @@ function openEventModal() {
         .map((b) => {
           const age = dateObj.getFullYear() - b.year;
           const passed = selectedNorm < todayNorm;
-          const agePhrase = passed ? `исполнилось ${age} лет` : `исполняется ${age} лет`;
+          const w = birthdayYearsWord(age);
+          const agePhrase = passed ? `исполнилось ${age} ${w}` : `исполняется ${age} ${w}`;
           return `День рождения ${b.name} 🍰<br><span class="birthday-age-note">(${agePhrase})</span>`;
         })
         .join(' ');
