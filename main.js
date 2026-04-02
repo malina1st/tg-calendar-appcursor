@@ -902,10 +902,15 @@ function openEventModal() {
 
   if (titleLabel) {
     if (birthdaysOnDate.length > 0) {
+      const today = new Date();
+      const todayNorm = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+      const selectedNorm = new Date(dateObj.getFullYear(), dateObj.getMonth(), dateObj.getDate());
       titleLabel.innerHTML = birthdaysOnDate
         .map((b) => {
           const age = dateObj.getFullYear() - b.year;
-          return `День рождения ${b.name} 🍰<br><span class="birthday-age-note">(исполняется ${age} лет)</span>`;
+          const passed = selectedNorm < todayNorm;
+          const agePhrase = passed ? `исполнилось ${age} лет` : `исполняется ${age} лет`;
+          return `День рождения ${b.name} 🍰<br><span class="birthday-age-note">(${agePhrase})</span>`;
         })
         .join(' ');
     } else {
