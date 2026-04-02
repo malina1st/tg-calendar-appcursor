@@ -21,9 +21,94 @@
     margin-bottom: 12px;
   }
   
-  .app-header h1 {
-    font-size: 1.4rem;
-    margin-bottom: 4px;
+  /* Заголовок в духе логотипа «Друзья»: цветные буквы, точки между ними */
+  .friends-title {
+    font-family: "Fredoka", system-ui, sans-serif;
+    font-weight: 700;
+    font-size: clamp(0.95rem, 3.2vw, 1.35rem);
+    line-height: 1.35;
+    letter-spacing: 0.02em;
+    margin-bottom: 6px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.2em;
+    text-transform: none;
+  }
+
+  .friends-line {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    row-gap: 0.15em;
+    column-gap: 0.45em;
+  }
+
+  .friends-word {
+    display: inline-flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .friends-c {
+    display: inline-block;
+    -webkit-text-stroke: 1.5px rgba(15, 23, 42, 0.95);
+    paint-order: stroke fill;
+    text-shadow:
+      0 2px 0 rgba(15, 23, 42, 0.35),
+      0 1px 0 rgba(0, 0, 0, 0.4);
+  }
+
+  /* Буквы: цикл как у точек в заставке (красный → жёлтый → синий → …) */
+  .friends-word > .friends-c:nth-child(12n + 1) {
+    color: #e31e24;
+  }
+  .friends-word > .friends-c:nth-child(12n + 3) {
+    color: #fdb927;
+  }
+  .friends-word > .friends-c:nth-child(12n + 5) {
+    color: #1e88e5;
+  }
+  .friends-word > .friends-c:nth-child(12n + 7) {
+    color: #00a651;
+  }
+  .friends-word > .friends-c:nth-child(12n + 9) {
+    color: #7b2cbf;
+  }
+  .friends-word > .friends-c:nth-child(12n + 11) {
+    color: #ff6b35;
+  }
+
+  .friends-dot {
+    width: 0.35em;
+    height: 0.35em;
+    min-width: 5px;
+    min-height: 5px;
+    border-radius: 50%;
+    margin: 0 0.12em;
+    flex-shrink: 0;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
+  }
+
+  .friends-word > .friends-dot:nth-child(12n + 2) {
+    background: #e31e24;
+  }
+  .friends-word > .friends-dot:nth-child(12n + 4) {
+    background: #fdb927;
+  }
+  .friends-word > .friends-dot:nth-child(12n + 6) {
+    background: #1e88e5;
+  }
+  .friends-word > .friends-dot:nth-child(12n + 8) {
+    background: #00a651;
+  }
+  .friends-word > .friends-dot:nth-child(12n + 10) {
+    background: #7b2cbf;
+  }
+  .friends-word > .friends-dot:nth-child(12n + 12) {
+    background: #ff6b35;
   }
   
 .app-header p {

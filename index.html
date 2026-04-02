@@ -4,6 +4,9 @@
   <meta charset="UTF-8" />
   <title>Календарь общих событий</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600;700&display=swap" rel="stylesheet" />
   <!-- Подключаем стили -->
   <link rel="stylesheet" href="style.css" />
   <!-- Официальный скрипт Telegram WebApp -->
@@ -12,7 +15,39 @@
 <body>
   <div class="app">
     <header class="app-header">
-      <h1>Календарь общих событий</h1>
+      <h1 class="friends-title" aria-label="Календарь общих событий">
+        <span class="friends-line">
+          <span class="friends-word">
+            <span class="friends-c">К</span><span class="friends-dot" aria-hidden="true"></span>
+            <span class="friends-c">А</span><span class="friends-dot" aria-hidden="true"></span>
+            <span class="friends-c">Л</span><span class="friends-dot" aria-hidden="true"></span>
+            <span class="friends-c">Е</span><span class="friends-dot" aria-hidden="true"></span>
+            <span class="friends-c">Н</span><span class="friends-dot" aria-hidden="true"></span>
+            <span class="friends-c">Д</span><span class="friends-dot" aria-hidden="true"></span>
+            <span class="friends-c">А</span><span class="friends-dot" aria-hidden="true"></span>
+            <span class="friends-c">Р</span><span class="friends-dot" aria-hidden="true"></span>
+            <span class="friends-c">Ь</span>
+          </span>
+        </span>
+        <span class="friends-line">
+          <span class="friends-word">
+            <span class="friends-c">О</span><span class="friends-dot" aria-hidden="true"></span>
+            <span class="friends-c">Б</span><span class="friends-dot" aria-hidden="true"></span>
+            <span class="friends-c">Щ</span><span class="friends-dot" aria-hidden="true"></span>
+            <span class="friends-c">И</span><span class="friends-dot" aria-hidden="true"></span>
+            <span class="friends-c">Х</span>
+          </span>
+          <span class="friends-word">
+            <span class="friends-c">С</span><span class="friends-dot" aria-hidden="true"></span>
+            <span class="friends-c">О</span><span class="friends-dot" aria-hidden="true"></span>
+            <span class="friends-c">Б</span><span class="friends-dot" aria-hidden="true"></span>
+            <span class="friends-c">Ы</span><span class="friends-dot" aria-hidden="true"></span>
+            <span class="friends-c">Т</span><span class="friends-dot" aria-hidden="true"></span>
+            <span class="friends-c">И</span><span class="friends-dot" aria-hidden="true"></span>
+            <span class="friends-c">Й</span>
+          </span>
+        </span>
+      </h1>
       <p id="current-year"></p>
     </header>
 
