@@ -133,6 +133,25 @@ function formatDateHuman(date) {
   });
 }
 
+/** Дата и время конца: на час позже начала (локальное время, с переходом на следующий день при необходимости) */
+function endDateTimeOneHourAfter(startDateStr, startTimeStr) {
+  const dateStr = (startDateStr || "").trim();
+  const timeStr = (startTimeStr || "").trim();
+  if (!dateStr || !timeStr) return null;
+  const m = timeStr.match(/^(\d{1,2}):(\d{2})/);
+  if (!m) return null;
+  const hh = parseInt(m[1], 10);
+  const mm = parseInt(m[2], 10);
+  if (Number.isNaN(hh) || Number.isNaN(mm)) return null;
+  const d = parseDateLocal(dateStr);
+  d.setHours(hh, mm, 0, 0);
+  d.setTime(d.getTime() + 60 * 60 * 1000);
+  return {
+    endDate: formatDate(d),
+    endTime: `${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}`,
+  };
+}
+
 /** Склонение возраста: 1/21/31/41/51… год, 2–4/22–24/32–34… года, 11–14 лет, иначе лет */
 function birthdayYearsWord(age) {
   const n = Math.abs(age);
@@ -884,6 +903,25 @@ function setupForm() {
       closeEventModal();
     });
   }
+
+  const syncEndFromStart = () => {
+    if (!form || form.dataset.mode === "edit") return;
+    const sd = (startDateInput?.value || "").trim() || state.selectedDate;
+    const st = (startTimeInput?.value || "").trim();
+    if (!sd || !st || !endDateInput || !endTimeInput) return;
+    const next = endDateTimeOneHourAfter(sd, st);
+    if (!next) return;
+    endDateInput.value = next.endDate;
+    endTimeInput.value = next.endTime;
+  };
+
+  if (startTimeInput) {
+    startTimeInput.addEventListener("change", syncEndFromStart);
+    startTimeInput.addEventListener("input", syncEndFromStart);
+  }
+  if (startDateInput) {
+    startDateInput.addEventListener("change", syncEndFromStart);
+  }
 }
 
 function openEventModal() {
@@ -1074,7 +1112,7 @@ function openEventModal() {
   if (startDateInput) startDateInput.value = state.selectedDate;
   if (startTimeInput) startTimeInput.value = "12:00";
   if (endDateInput) endDateInput.value = state.selectedDate;
-  if (endTimeInput) endTimeInput.value = "12:00";
+  if (endTimeInput) endTimeInput.value = "13:00";
 
   // По умолчанию форма скрыта, пока не нажали "+"
   const form = document.getElementById("event-form");
