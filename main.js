@@ -358,32 +358,61 @@ const BIRTHDAYS = [
 
 const WEEKDAY_SHORT = ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс"];
 
+/** Событие уже закончилось (конец даты/времени в прошлом, локальное время) */
+function isEventPast(e) {
+  const startDate = e.startDate || (e.dates && e.dates[0]);
+  const endDate = e.endDate || startDate;
+  if (!endDate) return false;
+  const endTimeRaw = (e.endTime || "").trim();
+  const parts = endDate.split("-").map(Number);
+  if (parts.length !== 3) return false;
+  const [y, mo, d] = parts;
+  const end = new Date(y, mo - 1, d);
+  if (endTimeRaw) {
+    const tm = endTimeRaw.match(/^(\d{1,2}):(\d{2})/);
+    if (tm) {
+      const hh = parseInt(tm[1], 10);
+      const mm = parseInt(tm[2], 10);
+      end.setHours(hh, Number.isNaN(mm) ? 0 : mm, 0, 0);
+    } else {
+      end.setHours(23, 59, 59, 999);
+    }
+  } else {
+    end.setHours(23, 59, 59, 999);
+  }
+  return end.getTime() < Date.now();
+}
+
 function renderYearCalendar() {
   const container = document.getElementById("calendar-year");
   const yearLabel = document.getElementById("current-year");
   container.innerHTML = "";
   yearLabel.innerHTML = `<span class="current-year-number">${state.year}</span>`;
 
-  // Карта "дата -> информация о диапазоне события"
+  // Карта "дата -> информация о диапазоне события"; allPast — все события на эту дату уже прошли
   const eventsRangeByDate = {};
   state.events.forEach((e) => {
     const startDate = e.startDate || (e.dates && e.dates[0]);
     const endDate = e.endDate || startDate;
     if (!startDate) return;
 
+    const past = isEventPast(e);
     const rangeDates = buildDatesRange(startDate, endDate);
 
     if (rangeDates.length === 1) {
       const d = rangeDates[0];
       if (!eventsRangeByDate[d]) {
-        eventsRangeByDate[d] = { single: true };
+        eventsRangeByDate[d] = { single: true, allPast: past };
       } else {
         eventsRangeByDate[d].single = true;
+        eventsRangeByDate[d].allPast = eventsRangeByDate[d].allPast && past;
       }
     } else {
       rangeDates.forEach((d, idx) => {
         if (!eventsRangeByDate[d]) {
-          eventsRangeByDate[d] = { single: false, start: false, middle: false, end: false };
+          eventsRangeByDate[d] = { single: false, start: false, middle: false, end: false, allPast: past };
+        } else {
+          eventsRangeByDate[d].allPast = eventsRangeByDate[d].allPast && past;
         }
         if (idx === 0) {
           eventsRangeByDate[d].start = true;
@@ -591,6 +620,7 @@ function buildMonthCard(month, eventsRangeByDate, todayStr, isExpanded) {
       } else {
         cell.classList.add("day-range-single");
       }
+      if (rangeInfo.allPast) cell.classList.add("day-range-past");
     }
 
     cell.addEventListener("click", (e) => {

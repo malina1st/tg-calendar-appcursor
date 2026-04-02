@@ -348,6 +348,28 @@
   z-index: 1;
 }
 
+/* Прошедшие события — серый контур вместо оранжевого */
+.day-range-single.day-range-past {
+  border-color: #6b7280;
+}
+
+.day-range-start.day-range-past {
+  border-top-color: #6b7280;
+  border-bottom-color: #6b7280;
+  border-left-color: #6b7280;
+}
+
+.day-range-middle.day-range-past {
+  border-top-color: #6b7280;
+  border-bottom-color: #6b7280;
+}
+
+.day-range-end.day-range-past {
+  border-top-color: #6b7280;
+  border-bottom-color: #6b7280;
+  border-right-color: #6b7280;
+}
+
 /* Только сегодня + событие: зелёный «сегодня» + оранжевое кольцо */
 .day-cell.day-today.day-range-single {
   border: 1px solid #22c55e;
@@ -360,6 +382,16 @@
 .day-cell.day-today.day-range-end {
   border-color: #22c55e;
   box-shadow: 0 0 0 2px #f97316;
+}
+
+.day-cell.day-today.day-range-single.day-range-past {
+  box-shadow: 0 0 0 2px #6b7280;
+}
+
+.day-cell.day-today.day-range-start.day-range-past,
+.day-cell.day-today.day-range-middle.day-range-past,
+.day-cell.day-today.day-range-end.day-range-past {
+  box-shadow: 0 0 0 2px #6b7280;
 }
 
 .event-panel {
