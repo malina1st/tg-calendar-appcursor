@@ -219,6 +219,13 @@ function buildDatesRange(startDateStr, endDateStr) {
   return dates;
 }
 
+function addDays(dateStr, days) {
+  const d = parseDateLocal(dateStr);
+  if (Number.isNaN(d.getTime())) return dateStr;
+  d.setDate(d.getDate() + days);
+  return formatDate(d);
+}
+
 // Загрузить все события с сервера Supabase. При ошибке возвращает null (не перезаписывать локальные данные).
 async function fetchEventsFromServer() {
   try {
@@ -844,6 +851,10 @@ function setupForm() {
     if (!title || !startDate) return;
 
     let endDate = endDateRaw || startDate;
+    if (endTime === "01:00" && endDate === startDate) {
+      endDate = addDays(startDate, 1);
+      if (endDateInput) endDateInput.value = endDate;
+    }
     if (endDate < startDate) {
       // если по ошибке выбрали дату конца раньше начала — меняем местами
       const tmp = endDate;
@@ -966,12 +977,24 @@ function setupForm() {
     endTimeInput.value = next.endTime;
   };
 
+  const syncEndDateFromEndTime = () => {
+    if (!form || form.dataset.mode === "edit") return;
+    const sd = (startDateInput?.value || "").trim() || state.selectedDate;
+    const et = (endTimeInput?.value || "").trim();
+    if (!sd || !endDateInput || et !== "01:00") return;
+    endDateInput.value = addDays(sd, 1);
+  };
+
   if (startTimeInput) {
     startTimeInput.addEventListener("change", syncEndFromStart);
     startTimeInput.addEventListener("input", syncEndFromStart);
   }
   if (startDateInput) {
     startDateInput.addEventListener("change", syncEndFromStart);
+  }
+  if (endTimeInput) {
+    endTimeInput.addEventListener("change", syncEndDateFromEndTime);
+    endTimeInput.addEventListener("input", syncEndDateFromEndTime);
   }
 }
 
