@@ -14,27 +14,9 @@ const SUPABASE_ANON_KEY = "sb_publishable_GZ8V9A3uRlGx7s6sfvy3Vw_dPdsILiW";
 const EVENTS_ENDPOINT = `${SUPABASE_URL}/rest/v1/events`;
 
 // Разрешённые пользователи Telegram (по user.id из WebApp)
-// Сюда нужно вписать числовые ID 18 пользователей, например:
-// const ALLOWED_TELEGRAM_USER_IDS = [123456789, 987654321, ...];
 const ALLOWED_TELEGRAM_USER_IDS = [
-  231645712, // Дмитрий
+  231645712, // Дима
   343074507, // Рита
-  404517792, // Лейла
-  280705269, // Сабина
-  857772788, // Михаил
-  495188991, // Сергей
-  436970276, // Валентина
-  334927645, // Андрей
-  258219308, // Марина
-  501924871, // Карина
-  486645843, // Елена
-  589155439, // Екатерина
-  455201136, // Костя
-  697579364, // Станислав
-  402472278, // Никита
-  152288730, // Полина
-  1081903206, // Даша
-  387041247, // Рустик
 ];
 
 function getTelegramUserId() {
@@ -1222,17 +1204,10 @@ document.addEventListener("DOMContentLoaded", async () => {
   if (!isTelegramUserAllowed()) {
     const appRoot = document.querySelector(".app");
     if (appRoot) {
-      const uid = getTelegramUserId();
-      const line1 = "У вас нет доступа к этому календарю.";
-      const line2 = uid !== null
-        ? "Ваш ID в Telegram: " + uid
-        : "ID не получен (откройте календарь из бота в Telegram).";
-      const line3 = "Напишите этот номер администратору — он добавит вас в список.";
+      const message = "Проект заморожен из-за невостребовательности 😢 ❄️";
       appRoot.innerHTML =
         "<div style=\"padding:20px; text-align:center; color:#e5e7eb; max-width:320px; margin:0 auto;\">" +
-        "<p style=\"font-size:1rem; margin-bottom:16px;\">" + line1 + "</p>" +
-        "<p style=\"font-size:1.1rem; margin-bottom:16px; font-weight:bold; word-break:break-all;\">" + line2 + "</p>" +
-        "<p style=\"font-size:0.95rem; color:#9ca3af;\">" + line3 + "</p>" +
+        "<p style=\"font-size:1.05rem; line-height:1.5;\">" + message + "</p>" +
         "</div>";
     }
     return;
