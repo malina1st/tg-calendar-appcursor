@@ -39,9 +39,17 @@ function getTelegramUserId() {
   return Number.isNaN(id) ? null : id;
 }
 
+/** Открыто именно в Telegram с данными пользователя (не пустой WebApp в браузере) */
+function isTelegramWebAppContext() {
+  if (!tg) return false;
+  if (tg.initData && String(tg.initData).length > 0) return true;
+  const id = tg.initDataUnsafe?.user?.id;
+  return id !== undefined && id !== null && !Number.isNaN(Number(id));
+}
+
 function isTelegramUserAllowed() {
-  if (!tg) {
-    return true;
+  if (!isTelegramWebAppContext()) {
+    return false;
   }
 
   const userId = getTelegramUserId();
@@ -1210,6 +1218,9 @@ document.addEventListener("DOMContentLoaded", async () => {
         "<p style=\"font-size:1.05rem; line-height:1.5;\">" + message + "</p>" +
         "</div>";
     }
+    document.querySelectorAll("#year-picker-modal, #event-modal").forEach((el) => {
+      el.remove();
+    });
     return;
   }
 
