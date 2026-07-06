@@ -584,9 +584,29 @@ function renderYearCalendar() {
   }
 }
 
+function scrollCurrentMonthToCenter() {
+  const now = new Date();
+  if (state.year !== now.getFullYear() || state.expandedMonth !== null) return;
+
+  const card = document.querySelector(
+    `#calendar-year .month-card[data-month="${now.getMonth()}"]`
+  );
+  if (!card) return;
+
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      const rect = card.getBoundingClientRect();
+      const target =
+        window.scrollY + rect.top + rect.height / 2 - window.innerHeight / 2;
+      window.scrollTo({ top: Math.max(0, target), behavior: "instant" });
+    });
+  });
+}
+
 function buildMonthCard(month, eventsRangeByDate, todayStr, isExpanded) {
   const card = document.createElement("div");
   card.className = "month-card";
+  card.dataset.month = String(month);
   if (isMonthBeforeCurrent(month, state.year)) card.classList.add("month-card-past");
 
   const title = document.createElement("div");
@@ -1320,4 +1340,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     renderYearCalendar();
     renderSidePanel();
   }
+
+  scrollCurrentMonthToCenter();
 });
