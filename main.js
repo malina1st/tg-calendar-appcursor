@@ -1,8 +1,11 @@
 // Поддержка Telegram WebApp (если открыто внутри Telegram)
+if ("scrollRestoration" in history) {
+  history.scrollRestoration = "manual";
+}
+
 const tg = window.Telegram && window.Telegram.WebApp ? window.Telegram.WebApp : null;
 if (tg) {
   tg.ready();
-  tg.expand();
 }
 
 // ============= НАСТРОЙКИ =============
@@ -585,7 +588,13 @@ function renderYearCalendar() {
 }
 
 function revealAppAfterInitialScroll() {
+  const appEl = document.querySelector(".app");
+
   const finish = () => {
+    if (appEl instanceof HTMLElement) {
+      appEl.style.removeProperty("visibility");
+      appEl.style.removeProperty("opacity");
+    }
     document.documentElement.classList.remove("app-scroll-preparing");
   };
 
@@ -603,13 +612,48 @@ function revealAppAfterInitialScroll() {
     return;
   }
 
-  requestAnimationFrame(() => {
-    const rect = card.getBoundingClientRect();
-    const target =
-      window.scrollY + rect.top + rect.height / 2 - window.innerHeight / 2;
-    window.scrollTo(0, Math.max(0, target));
-    finish();
-  });
+  if (tg) tg.expand();
+
+  const applyScroll = () => {
+    const container = document.getElementById("calendar-year");
+    container?.offsetHeight;
+
+    const before = window.scrollY;
+    card.scrollIntoView({ block: "center", inline: "nearest", behavior: "instant" });
+
+    if (Math.abs(window.scrollY - before) < 1) {
+      const rect = card.getBoundingClientRect();
+      const target =
+        window.scrollY + rect.top + rect.height / 2 - window.innerHeight / 2;
+      const top = Math.max(0, target);
+      window.scrollTo(0, top);
+      document.documentElement.scrollTop = top;
+      document.body.scrollTop = top;
+    }
+  };
+
+  let lastScrollY = -1;
+  let stableFrames = 0;
+  let frameCount = 0;
+
+  const waitForStableScroll = () => {
+    frameCount += 1;
+    applyScroll();
+    const currentScrollY = window.scrollY;
+    if (currentScrollY === lastScrollY) {
+      stableFrames += 1;
+    } else {
+      stableFrames = 0;
+      lastScrollY = currentScrollY;
+    }
+    if (stableFrames >= 2 || frameCount >= 12) {
+      finish();
+      return;
+    }
+    requestAnimationFrame(waitForStableScroll);
+  };
+
+  requestAnimationFrame(waitForStableScroll);
 }
 
 function buildMonthCard(month, eventsRangeByDate, todayStr, isExpanded) {
@@ -1250,7 +1294,13 @@ document.addEventListener("DOMContentLoaded", async () => {
     document.querySelectorAll("#year-picker-modal, #event-modal").forEach((el) => {
       el.remove();
     });
+    const appEl = document.querySelector(".app");
+    if (appEl instanceof HTMLElement) {
+      appEl.style.removeProperty("visibility");
+      appEl.style.removeProperty("opacity");
+    }
     document.documentElement.classList.remove("app-scroll-preparing");
+    if (tg) tg.expand();
     return;
   }
 

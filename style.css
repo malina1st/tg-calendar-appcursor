@@ -9,6 +9,12 @@
     background: #0f172a;
     color: #e5e7eb;
   }
+
+  html.app-scroll-preparing .app {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+  }
   
   .app {
     max-width: 1200px;

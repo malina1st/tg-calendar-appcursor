@@ -1,19 +1,29 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="ru" class="app-scroll-preparing">
 <head>
   <meta charset="UTF-8" />
   <title>Календарь общих событий</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    html.app-scroll-preparing .app {
+      opacity: 0 !important;
+      visibility: hidden !important;
+      pointer-events: none !important;
+    }
+  </style>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Rubik+Wet+Paint&display=swap&subset=cyrillic,cyrillic-ext,latin,latin-ext" rel="stylesheet" />
   <!-- Подключаем стили -->
   <link rel="stylesheet" href="style.css" />
+  <script>
+    if ("scrollRestoration" in history) history.scrollRestoration = "manual";
+  </script>
   <!-- Официальный скрипт Telegram WebApp -->
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
 </head>
 <body>
-  <div class="app">
+  <div class="app" style="visibility:hidden">
     <header class="app-header">
       <h1 class="friends-title" aria-label="Календарь общих событий">
         <span class="friends-line">
