@@ -584,22 +584,31 @@ function renderYearCalendar() {
   }
 }
 
-function scrollCurrentMonthToCenter() {
+function revealAppAfterInitialScroll() {
+  const finish = () => {
+    document.documentElement.classList.remove("app-scroll-preparing");
+  };
+
   const now = new Date();
-  if (state.year !== now.getFullYear() || state.expandedMonth !== null) return;
+  if (state.year !== now.getFullYear() || state.expandedMonth !== null) {
+    finish();
+    return;
+  }
 
   const card = document.querySelector(
     `#calendar-year .month-card[data-month="${now.getMonth()}"]`
   );
-  if (!card) return;
+  if (!card) {
+    finish();
+    return;
+  }
 
   requestAnimationFrame(() => {
-    requestAnimationFrame(() => {
-      const rect = card.getBoundingClientRect();
-      const target =
-        window.scrollY + rect.top + rect.height / 2 - window.innerHeight / 2;
-      window.scrollTo({ top: Math.max(0, target), behavior: "instant" });
-    });
+    const rect = card.getBoundingClientRect();
+    const target =
+      window.scrollY + rect.top + rect.height / 2 - window.innerHeight / 2;
+    window.scrollTo(0, Math.max(0, target));
+    finish();
   });
 }
 
@@ -1241,6 +1250,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     document.querySelectorAll("#year-picker-modal, #event-modal").forEach((el) => {
       el.remove();
     });
+    document.documentElement.classList.remove("app-scroll-preparing");
     return;
   }
 
@@ -1332,14 +1342,16 @@ document.addEventListener("DOMContentLoaded", async () => {
   renderYearCalendar();
   renderSidePanel();
 
-  // Синхронизация с сервером: при успешном ответе Supabase берём данные с сервера (один источник правды для всех устройств)
-  const serverEvents = await fetchEventsFromServer();
-  if (serverEvents !== null) {
-    state.events = serverEvents;
-    saveEvents(state.events);
-    renderYearCalendar();
-    renderSidePanel();
+  try {
+    // Синхронизация с сервером: при успешном ответе Supabase берём данные с сервера (один источник правды для всех устройств)
+    const serverEvents = await fetchEventsFromServer();
+    if (serverEvents !== null) {
+      state.events = serverEvents;
+      saveEvents(state.events);
+      renderYearCalendar();
+      renderSidePanel();
+    }
+  } finally {
+    revealAppAfterInitialScroll();
   }
-
-  scrollCurrentMonthToCenter();
 });
